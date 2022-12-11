@@ -19,12 +19,13 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 public class TudorTeleOp extends LinearOpMode {
 
     SampleMecanumDrive mecanumDrive;
-    DcMotorEx liftMotor1,liftMotor2, plateMotor;
+    DcMotorEx liftMotor1, liftMotor2, plateMotor;
     Servo catcher;
     double suppress1;
     NormalizedRGBA colors;
     RevColorSensorV3 sensor;
-    int cp1 = 0,cp2 = 0,pp = 0;
+    int cp1 = 0, cp2 = 0, pp = 0;
+    double suppressRotate;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -34,7 +35,8 @@ public class TudorTeleOp extends LinearOpMode {
             run();
         }
     }
-    private void initialization(){
+
+    private void initialization() {
         liftMotor1 = hardwareMap.get(DcMotorEx.class, "liftMotor1");
         liftMotor2 = hardwareMap.get(DcMotorEx.class, "liftMotor2");
         plateMotor = hardwareMap.get(DcMotorEx.class, "plateMotor");
@@ -61,145 +63,157 @@ public class TudorTeleOp extends LinearOpMode {
         mecanumDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    private void controlWheels(){
+    private void controlWheels() {
         Pose2d poseEstimate = mecanumDrive.getPoseEstimate();
         Vector2d input = new Vector2d(
-                        -gamepad1.left_stick_y*suppress1,
-                        -gamepad1.left_stick_x*suppress1
-                ).rotated(-poseEstimate.getHeading());
+                -gamepad1.left_stick_y * suppress1,
+                -gamepad1.left_stick_x * suppress1
+        ).rotated(-poseEstimate.getHeading());
         mecanumDrive.setWeightedDrivePower(
                 new Pose2d(
                         input.getX(),
                         input.getY(),
-                        -(gamepad1.right_trigger-gamepad1.left_trigger)*suppress1
+                        -(gamepad1.right_trigger - gamepad1.left_trigger) * suppressRotate
                 )
         );
     }
 
-    private void controlArm(){
-        if(gamepad2.left_stick_y!=0){
+    boolean standing = true;
+
+    private void controlArm() {
+        if (gamepad2.left_stick_y != 0) {
             liftMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             liftMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             cp1 = liftMotor1.getCurrentPosition();
             cp2 = liftMotor2.getCurrentPosition();
-            liftMotor1.setPower( 1f * gamepad2.left_stick_y);
-            liftMotor2.setPower( 1f * gamepad2.left_stick_y);
-        }
-        else {
+            if (gamepad2.left_stick_y > 0) {
+                if (cp1 > -5 || cp2 > -5) {
+                    liftMotor1.setPower(0f);
+                    liftMotor2.setPower(0f);
+                } else {
+                    liftMotor1.setPower(1f * gamepad2.left_stick_y);
+                    liftMotor2.setPower(1f * gamepad2.left_stick_y);
+                }
+            } else {
+                liftMotor1.setPower(1f * gamepad2.left_stick_y);
+                liftMotor2.setPower(1f * gamepad2.left_stick_y);
+            }
+        } else   {
             liftMotor1.setTargetPosition(cp1);
             liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftMotor1.setPower(1f);
             liftMotor2.setTargetPosition(cp2);
             liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftMotor2.setPower(1f);
+            if (liftMotor1.isBusy()) {
+                if (liftMotor1.getCurrentPosition() > -10 && liftMotor1.getTargetPosition() == 0f)
+                    liftMotor1.setPower(0f);
+                else liftMotor1.setPower(1f);
+            } else liftMotor1.setPower(0.2f);
+            if (liftMotor2.isBusy()) {
+                if (liftMotor2.getCurrentPosition() > -10 && liftMotor2.getTargetPosition() == 0f)
+                    liftMotor2.setPower(0f);
+                else liftMotor2.setPower(1f);
+            } else liftMotor2.setPower(0.2f);
         }
-        if (gamepad2.right_trigger!=0 || gamepad2.left_trigger!=0){
+        if (gamepad2.right_trigger != 0 || gamepad2.left_trigger != 0) {
             plateMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             pp = plateMotor.getCurrentPosition();
-            plateMotor.setPower ( 1f * (gamepad2.right_trigger-gamepad2.left_trigger));
-        }
-        else {
+            plateMotor.setPower(1f * (gamepad2.right_trigger - gamepad2.left_trigger));
+        } else {
             plateMotor.setTargetPosition(pp);
             plateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             plateMotor.setPower(1f);
         }
     }
+
     boolean lastPressedCatch = false;
-    private void controlCatcher(){
+
+    private void controlCatcher() {
         boolean left_bumper1_pressed = gamepad1.left_bumper;
-        if(left_bumper1_pressed&&!lastPressedCatch) {
-            if(catcher.getPosition()==0)
+        if (left_bumper1_pressed && !lastPressedCatch) {
+            if (catcher.getPosition() == 0)
                 catcher.setPosition(.4f);
             else
                 catcher.setPosition(0);
         }
         lastPressedCatch = left_bumper1_pressed;
     }
-    private void setPlateLevel(){
-        if(gamepad2.right_bumper){
-            pp = - 1000;
+
+    private void setPlateLevel() {
+        if (gamepad2.right_bumper) {
+            pp = -1000;
             plateMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             plateMotor.setTargetPosition(-1000);
-        }
-        else if (gamepad2.left_bumper){
+        } else if (gamepad2.left_bumper) {
             pp = 1000;
             plateMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             plateMotor.setTargetPosition(1000);
-        }
-        else if(gamepad2.dpad_up) {
+        } else if (gamepad2.dpad_up) {
             pp = 0;
             plateMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             plateMotor.setTargetPosition(0);
         }
     }
-    private void setLiftLevel(){
+
+    private void setLiftLevel() {
         if (gamepad2.a) {
             pp = 0;
-            plateMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             plateMotor.setTargetPosition(0);
+            plateMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             cp1 = 0;
-            liftMotor1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor1.setTargetPosition(cp1);
+            liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor1.setPower(1f);
             cp2 = 0;
-            liftMotor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor2.setTargetPosition(cp2);
+            liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor2.setPower(1f);
-        }
-        else if (gamepad2.b) {
-            cp1 = -702;
-            liftMotor1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        } else if (gamepad2.b) {
+            cp1 = -732;
             liftMotor1.setTargetPosition(cp1);
+            liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor1.setPower(1f);
-            cp2 = -702;
-            liftMotor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            cp2 = -732;
             liftMotor2.setTargetPosition(cp2);
+            liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor2.setPower(1f);
-        }
-        else if (gamepad2.x) {
+        } else if (gamepad2.x) {
             cp1 = -1235;
-            liftMotor1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor1.setTargetPosition(cp1);
+            liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor1.setPower(1f);
             cp2 = -1234;
-            liftMotor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor2.setTargetPosition(cp2);
+            liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor2.setPower(1f);
-        }
-        else if (gamepad2.y) {
-            cp1 = -1740;
-            liftMotor1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        } else if (gamepad2.y) {
+            cp1 = -1750;
             liftMotor1.setTargetPosition(cp1);
+            liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor1.setPower(1f);
-            cp2 = -1737;
-            liftMotor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            cp2 = -1755;
             liftMotor2.setTargetPosition(cp2);
+            liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor2.setPower(1f);
         }
     }
 
     private void suppressWheels() {
-        if(gamepad1.right_bumper)
+        if (gamepad1.right_bumper) {
             suppress1 = 0.5f;
-        else
+            suppressRotate = 0.5f;
+        } else {
             suppress1 = 1f;
+            suppressRotate = 1f;
+        }
     }
 
-    private void colorDetect(){
-        if(catcher.getPosition()==0f)
-            if(sensor.red()>sensor.blue() && sensor.red()>sensor.green() && sensor.getDistance(DistanceUnit.METER)< 0.045)
+    private void colorDetect() {
+        if (catcher.getPosition() == 0f)
+            if (sensor.red() > sensor.blue() && sensor.red() > sensor.green() && sensor.getDistance(DistanceUnit.METER) < 0.045)
                 catcher.setPosition(.4f);
     }
 
-    private void run(){
+    private void run() {
         suppressWheels();
         setPlateLevel();
         controlWheels();
@@ -207,16 +221,19 @@ public class TudorTeleOp extends LinearOpMode {
         controlArm();
         controlCatcher();
         debugTelemetry();
-        colorDetect();
+        ///colorDetect();
     }
 
-    private void debugTelemetry(){
+    private void debugTelemetry() {
         telemetry.addData("lift1", liftMotor1.getCurrentPosition());
         telemetry.addData("lift2", liftMotor2.getCurrentPosition());
         telemetry.addData("plate", plateMotor.getCurrentPosition());
-        telemetry.addData("claw",catcher.getPosition());
+        telemetry.addData("claw", catcher.getPosition());
         telemetry.addLine("Colors ").addData("red", sensor.red()).addData("green", sensor.green()).addData("blue", sensor.blue());
         telemetry.addData("colorDistance", sensor.getDistance(DistanceUnit.METER));
+        telemetry.addData("motorPower1", liftMotor1.getPower());
+        telemetry.addData("motorPower2", liftMotor2.getPower());
+        telemetry.addData("motorBusy1", liftMotor1.isBusy());
         telemetry.update();
     }
 

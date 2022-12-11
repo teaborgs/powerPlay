@@ -53,8 +53,6 @@ public class AutoUtil {
             liftMotor2.setTargetPosition(-20);
         }
 
-        liftMotor1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        liftMotor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftMotor1.setPower(1f);

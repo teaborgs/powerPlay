@@ -96,6 +96,7 @@ public class ElectricTeleOp extends LinearOpMode {
                     )
             );
         }
+
     }
 
     int cp1 = 0;
@@ -127,21 +128,20 @@ public class ElectricTeleOp extends LinearOpMode {
         }
     }*/
     private void controlArm(){
-        if(gamepad2.left_stick_y!=0){
+        if (gamepad2.left_stick_y != 0) {
             liftMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             liftMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             cp1 = liftMotor1.getCurrentPosition();
             cp2 = liftMotor2.getCurrentPosition();
-            liftMotor1.setPower( 0.8f * gamepad2.left_stick_y);
-            liftMotor2.setPower( 0.8f * gamepad2.left_stick_y);
-        }
-        else{
+            liftMotor1.setPower(1f * gamepad2.left_stick_y);
+            liftMotor2.setPower(1f * gamepad2.left_stick_y);
+        } else {
             liftMotor1.setTargetPosition(cp1);
             liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftMotor1.setPower(1f);
+            liftMotor1.setPower(1f);/// de facut cp1>-10?0f:.5f
             liftMotor2.setTargetPosition(cp2);
             liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftMotor2.setPower(1f);
+            liftMotor2.setPower(1f);/// de facutcp2>-10?0f:.5f
         }
         if (gamepad2.right_trigger!=0 || gamepad2.left_trigger!=0){
             plateMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -181,53 +181,42 @@ public class ElectricTeleOp extends LinearOpMode {
     private void setLiftLevel(){
         if (gamepad2.a) {
             pp = 0;
-            plateMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             plateMotor.setTargetPosition(0);
-            cp1 = 0;
-            liftMotor1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            plateMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            cp1 = 5;
             liftMotor1.setTargetPosition(cp1);
-            liftMotor1.setPower(1f);
-            cp2 = 0;
-            liftMotor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftMotor2.setTargetPosition(cp2);
-            liftMotor2.setPower(1f);
-        }
-        else if (gamepad2.b) {
-            cp1 = -702;
-            liftMotor1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
             liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftMotor1.setTargetPosition(cp1);
             liftMotor1.setPower(1f);
-            cp2 = -702;
-            liftMotor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            cp2 = 5;
             liftMotor2.setTargetPosition(cp2);
+            liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor2.setPower(1f);
-        }
-        else if (gamepad2.x) {
+        } else if (gamepad2.b) {
+            cp1 = -732;
+            liftMotor1.setTargetPosition(cp1);
+            liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftMotor1.setPower(1f);
+            cp2 = -732;
+            liftMotor2.setTargetPosition(cp2);
+            liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftMotor2.setPower(1f);
+        } else if (gamepad2.x) {
             cp1 = -1235;
-            liftMotor1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor1.setTargetPosition(cp1);
+            liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor1.setPower(1f);
             cp2 = -1234;
-            liftMotor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor2.setTargetPosition(cp2);
+            liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor2.setPower(1f);
-        }
-        else if (gamepad2.y) {
+        } else if (gamepad2.y) {
             cp1 = -1740;
-            liftMotor1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor1.setTargetPosition(cp1);
+            liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor1.setPower(1f);
             cp2 = -1737;
-            liftMotor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor2.setTargetPosition(cp2);
+            liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor2.setPower(1f);
         }
     }
