@@ -21,36 +21,36 @@ public class AutoUtil {
     }
     public static void liftPosition(DcMotorEx liftMotor1, DcMotorEx liftMotor2, AutoPosition pos) {
         if(pos == AutoPosition.HIGH) {
-            liftMotor1.setTargetPosition(-1274);
-            liftMotor2.setTargetPosition(-1265);
+            liftMotor1.setTargetPosition(-1757);
+            liftMotor2.setTargetPosition(-1764);
         }
         else if(pos == AutoPosition.MID) {
-            liftMotor1.setTargetPosition(-918);
-            liftMotor2.setTargetPosition(-911);
+            liftMotor1.setTargetPosition(-1272);
+            liftMotor2.setTargetPosition(-1282);
         }
         else if(pos == AutoPosition.LOW) {
-            liftMotor1.setTargetPosition(-531);
-            liftMotor2.setTargetPosition(-524);
+            liftMotor1.setTargetPosition(-770);
+            liftMotor2.setTargetPosition(-770);
         }
         else if(pos == AutoPosition.ZERO) {
             liftMotor1.setTargetPosition(0);
             liftMotor2.setTargetPosition(0);
         }
         else if(pos == AutoPosition.CONE5) {
-            liftMotor1.setTargetPosition(-156);
-            liftMotor2.setTargetPosition(-149);
+            liftMotor1.setTargetPosition(-244);
+            liftMotor2.setTargetPosition(-240);
         }
         else if(pos == AutoPosition.CONE4) {
-            liftMotor1.setTargetPosition(-112);
-            liftMotor2.setTargetPosition(-103);
+            liftMotor1.setTargetPosition(-219);
+            liftMotor2.setTargetPosition(-221);
         }
         else if(pos == AutoPosition.CONE3) {
-            liftMotor1.setTargetPosition(-77);
-            liftMotor2.setTargetPosition(-66);
+            liftMotor1.setTargetPosition(-130);
+            liftMotor2.setTargetPosition(-131);
         }
         else if(pos == AutoPosition.CONE2) {
-            liftMotor1.setTargetPosition(-30);
-            liftMotor2.setTargetPosition(-20);
+            liftMotor1.setTargetPosition(-50);
+            liftMotor2.setTargetPosition(-50);
         }
 
         liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);

@@ -137,29 +137,45 @@ public class JunioriTeleOp extends LinearOpMode {
             plateMotor.setPower(1f);
         }
     }*/
-    private void controlArm(){
+    private void controlArm() {
         if (gamepad2.left_stick_y != 0) {
             liftMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            liftMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             cp1 = liftMotor1.getCurrentPosition();
+            liftMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             cp2 = liftMotor2.getCurrentPosition();
-            liftMotor1.setPower(1f * gamepad2.left_stick_y);
-            liftMotor2.setPower(1f * gamepad2.left_stick_y);
-        } else if (liftMotor1.getCurrentPosition() < liftMotor1.getTargetPosition()+60
-                &&liftMotor2.getCurrentPosition() < liftMotor2.getTargetPosition()+60) {
+            if(liftMotor1.getTargetPosition() >= 0f && gamepad2.left_stick_y > 0) liftMotor1.setPower(0f);
+            else liftMotor1.setPower(1f * gamepad2.left_stick_y);
+            if(liftMotor2.getTargetPosition() >= 0f && gamepad2.left_stick_y > 0) liftMotor2.setPower(0f);
+            else liftMotor2.setPower(1f * gamepad2.left_stick_y);
+        } else   {
             liftMotor1.setTargetPosition(cp1);
             liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftMotor1.setPower(.5f);
             liftMotor2.setTargetPosition(cp2);
             liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftMotor2.setPower(.5f);
+            if(liftMotor1.isBusy()) {
+                if (liftMotor1.getCurrentPosition() > -10 && liftMotor1.getTargetPosition() > -10)
+                    liftMotor1.setPower(0f);
+                else liftMotor1.setPower(1f);
+            } else {
+                if (liftMotor1.getCurrentPosition() > -10 && liftMotor1.getTargetPosition() > -10)
+                    liftMotor1.setPower(0f);
+                else liftMotor1.setPower(0.25f);
+            }
+            if(liftMotor2.isBusy()) {
+                if (liftMotor2.getCurrentPosition() > -10 && liftMotor2.getTargetPosition() > -10)
+                    liftMotor2.setPower(0f);
+                else liftMotor2.setPower(1f);
+            } else {
+                if (liftMotor2.getCurrentPosition() > -10 && liftMotor2.getTargetPosition() > -10)
+                    liftMotor2.setPower(0f);
+                else liftMotor2.setPower(0.25f);
+            }
         }
-        if (gamepad2.right_trigger!=0 || gamepad2.left_trigger!=0){
+        if (gamepad2.right_trigger != 0 || gamepad2.left_trigger != 0) {
             plateMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             pp = plateMotor.getCurrentPosition();
-            plateMotor.setPower ( 1f * (gamepad2.right_trigger-gamepad2.left_trigger));
-        }
-        else {
+            plateMotor.setPower(1f * (gamepad2.right_trigger - gamepad2.left_trigger));
+        } else {
             plateMotor.setTargetPosition(pp);
             plateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             plateMotor.setPower(1f);

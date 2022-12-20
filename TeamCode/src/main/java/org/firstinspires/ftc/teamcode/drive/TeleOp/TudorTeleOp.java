@@ -7,12 +7,23 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
+
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @TeleOp(group = "Driving")
@@ -22,9 +33,8 @@ public class TudorTeleOp extends LinearOpMode {
     DcMotorEx liftMotor1, liftMotor2, plateMotor;
     Servo catcher;
     double suppress1;
-    NormalizedRGBA colors;
     RevColorSensorV3 sensor;
-    int cp1 = 0, cp2 = 0, pp = 0;
+    int cp1 = 0, pp = 0, cp2 = 0;
     double suppressRotate;
 
     @Override
@@ -45,16 +55,15 @@ public class TudorTeleOp extends LinearOpMode {
         sensor.enableLed(true);
         catcher.setPosition(0);
         liftMotor1.setDirection(DcMotor.Direction.REVERSE);
-        liftMotor2.setDirection(DcMotor.Direction.REVERSE);
         liftMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         plateMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         plateMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        plateMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        liftMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        liftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        plateMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        liftMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        liftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         mecanumDrive = new SampleMecanumDrive(hardwareMap);
         mecanumDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -80,39 +89,46 @@ public class TudorTeleOp extends LinearOpMode {
 
     boolean standing = true;
 
+    private void resetArmLocalization() {
+        if(gamepad2.right_stick_button) {
+            liftMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            liftMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+    }
+
     private void controlArm() {
         if (gamepad2.left_stick_y != 0) {
             liftMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            liftMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             cp1 = liftMotor1.getCurrentPosition();
+            liftMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             cp2 = liftMotor2.getCurrentPosition();
-            if (gamepad2.left_stick_y > 0) {
-                if (cp1 > -5 || cp2 > -5) {
-                    liftMotor1.setPower(0f);
-                    liftMotor2.setPower(0f);
-                } else {
-                    liftMotor1.setPower(1f * gamepad2.left_stick_y);
-                    liftMotor2.setPower(1f * gamepad2.left_stick_y);
-                }
-            } else {
-                liftMotor1.setPower(1f * gamepad2.left_stick_y);
-                liftMotor2.setPower(1f * gamepad2.left_stick_y);
-            }
+            if(liftMotor1.getTargetPosition() >= 0f && gamepad2.left_stick_y > 0) liftMotor1.setPower(0f);
+            else liftMotor1.setPower(1f * gamepad2.left_stick_y);
+            if(liftMotor2.getTargetPosition() >= 0f && gamepad2.left_stick_y > 0) liftMotor2.setPower(0f);
+            else liftMotor2.setPower(1f * gamepad2.left_stick_y);
         } else   {
             liftMotor1.setTargetPosition(cp1);
             liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor2.setTargetPosition(cp2);
             liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            if (liftMotor1.isBusy()) {
-                if (liftMotor1.getCurrentPosition() > -10 && liftMotor1.getTargetPosition() == 0f)
+            if(liftMotor1.isBusy()) {
+                if (liftMotor1.getCurrentPosition() > -10 && liftMotor1.getTargetPosition() > -10)
                     liftMotor1.setPower(0f);
                 else liftMotor1.setPower(1f);
-            } else liftMotor1.setPower(0.2f);
-            if (liftMotor2.isBusy()) {
-                if (liftMotor2.getCurrentPosition() > -10 && liftMotor2.getTargetPosition() == 0f)
+            } else {
+                if (liftMotor1.getCurrentPosition() > -10 && liftMotor1.getTargetPosition() > -10)
+                    liftMotor1.setPower(0f);
+                else liftMotor1.setPower(0.1f);
+            }
+            if(liftMotor2.isBusy()) {
+                if (liftMotor2.getCurrentPosition() > -10 && liftMotor2.getTargetPosition() > -10)
                     liftMotor2.setPower(0f);
                 else liftMotor2.setPower(1f);
-            } else liftMotor2.setPower(0.2f);
+            } else {
+                if (liftMotor2.getCurrentPosition() > -10 && liftMotor2.getTargetPosition() > -10)
+                    liftMotor2.setPower(0f);
+                else liftMotor2.setPower(0.1f);
+            }
         }
         if (gamepad2.right_trigger != 0 || gamepad2.left_trigger != 0) {
             plateMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -121,7 +137,10 @@ public class TudorTeleOp extends LinearOpMode {
         } else {
             plateMotor.setTargetPosition(pp);
             plateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            plateMotor.setPower(1f);
+            if(plateMotor.isBusy())
+                plateMotor.setPower(1f);
+            else
+                plateMotor.setPower(0f);
         }
     }
 
@@ -141,59 +160,101 @@ public class TudorTeleOp extends LinearOpMode {
     private void setPlateLevel() {
         if (gamepad2.right_bumper) {
             pp = -1000;
-            plateMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             plateMotor.setTargetPosition(-1000);
         } else if (gamepad2.left_bumper) {
             pp = 1000;
-            plateMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             plateMotor.setTargetPosition(1000);
         } else if (gamepad2.dpad_up) {
             pp = 0;
-            plateMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             plateMotor.setTargetPosition(0);
         }
+        if(gamepad2.right_bumper || gamepad2.left_bumper || gamepad2.dpad_up)
+            plateMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
     }
 
     private void setLiftLevel() {
         if (gamepad2.a) {
             pp = 0;
             plateMotor.setTargetPosition(0);
-            plateMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             cp1 = 0;
             liftMotor1.setTargetPosition(cp1);
-            liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor1.setPower(1f);
             cp2 = 0;
             liftMotor2.setTargetPosition(cp2);
-            liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor2.setPower(1f);
-        } else if (gamepad2.b) {
-            cp1 = -732;
-            liftMotor1.setTargetPosition(cp1);
-            liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftMotor1.setPower(1f);
-            cp2 = -732;
-            liftMotor2.setTargetPosition(cp2);
-            liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftMotor2.setPower(1f);
+            pp = 0;
+            plateMotor.setTargetPosition(0);
         } else if (gamepad2.x) {
-            cp1 = -1235;
+            cp1 = -1272;
             liftMotor1.setTargetPosition(cp1);
-            liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor1.setPower(1f);
-            cp2 = -1234;
+            cp2 = -1282;
             liftMotor2.setTargetPosition(cp2);
-            liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor2.setPower(1f);
+            pp = -1000;
+            plateMotor.setTargetPosition(-1000);
+        } else if (gamepad2.b) {
+            cp1 = -770;
+            liftMotor1.setTargetPosition(cp1);
+            liftMotor1.setPower(1f);
+            cp2 = -770;
+            liftMotor2.setTargetPosition(cp2);
+            liftMotor2.setPower(1f);
+            pp = -1000;
+            plateMotor.setTargetPosition(-1000);
         } else if (gamepad2.y) {
-            cp1 = -1750;
+            cp1 = -1757;
             liftMotor1.setTargetPosition(cp1);
-            liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor1.setPower(1f);
-            cp2 = -1755;
+            cp2 = -1764;
             liftMotor2.setTargetPosition(cp2);
-            liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor2.setPower(1f);
+            pp = -1000;
+            plateMotor.setTargetPosition(-1000);
+        } else if (gamepad2.dpad_up) {
+            cp1 = -1757;
+            liftMotor1.setTargetPosition(cp1);
+            liftMotor1.setPower(1f);
+            cp2 = -1764;
+            liftMotor2.setTargetPosition(cp2);
+            liftMotor2.setPower(1f);
+            pp = 1000;
+            plateMotor.setTargetPosition(1000);
+        } else if(gamepad2.dpad_left) {
+            cp1 = -1272;
+            liftMotor1.setTargetPosition(cp1);
+            liftMotor1.setPower(1f);
+            cp2 = -1282;
+            liftMotor2.setTargetPosition(cp2);
+            liftMotor2.setPower(1f);
+            pp = 1000;
+            plateMotor.setTargetPosition(1000);
+        }
+        else if(gamepad2.dpad_right) {
+            cp1 = -770;
+            liftMotor1.setTargetPosition(cp1);
+            liftMotor1.setPower(1f);
+            cp2 = -770;
+            liftMotor2.setTargetPosition(cp2);
+            liftMotor2.setPower(1f);
+            pp = 1000;
+            plateMotor.setTargetPosition(1000);
+        }
+        else if(gamepad2.dpad_down) {
+            pp = 0;
+            plateMotor.setTargetPosition(0);
+            cp1 = 0;
+            liftMotor1.setTargetPosition(cp1);
+            liftMotor1.setPower(1f);
+            cp2 = 0;
+            liftMotor2.setTargetPosition(cp2);
+            liftMotor2.setPower(1f);
+            pp = 0;
+            plateMotor.setTargetPosition(0);
+        }
+        if (gamepad2.a || gamepad2.b || gamepad2.x || gamepad2.y || gamepad2.dpad_down || gamepad2.dpad_up || gamepad2.dpad_left || gamepad2.dpad_right) {
+            liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            plateMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         }
     }
 
@@ -207,21 +268,31 @@ public class TudorTeleOp extends LinearOpMode {
         }
     }
 
+    private void autonomousArm() {
+        if(gamepad2.back) {
+            pp = 1423;
+            plateMotor.setTargetPosition(1423);
+            plateMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        }
+    }
     private void colorDetect() {
         if (catcher.getPosition() == 0f)
-            if (sensor.red() > sensor.blue() && sensor.red() > sensor.green() && sensor.getDistance(DistanceUnit.METER) < 0.045)
+            if (sensor.red() > sensor.blue() && sensor.red() > sensor.green() && sensor.getDistance(DistanceUnit.METER) < 0.15)
                 catcher.setPosition(.4f);
     }
 
     private void run() {
+        resetArmLocalization();
         suppressWheels();
         setPlateLevel();
+        //setArmPos();
         controlWheels();
         setLiftLevel();
         controlArm();
         controlCatcher();
         debugTelemetry();
-        ///colorDetect();
+        autonomousArm();
+        //colorDetect();
     }
 
     private void debugTelemetry() {
@@ -232,8 +303,11 @@ public class TudorTeleOp extends LinearOpMode {
         telemetry.addLine("Colors ").addData("red", sensor.red()).addData("green", sensor.green()).addData("blue", sensor.blue());
         telemetry.addData("colorDistance", sensor.getDistance(DistanceUnit.METER));
         telemetry.addData("motorPower1", liftMotor1.getPower());
-        telemetry.addData("motorPower2", liftMotor2.getPower());
         telemetry.addData("motorBusy1", liftMotor1.isBusy());
+        telemetry.addData("motorPower2", liftMotor2.getPower());
+        telemetry.addData("motorBusy2", liftMotor2.isBusy());
+        telemetry.addData("plateBusy1", plateMotor.isBusy());
+        telemetry.addData("platePower", plateMotor.getPower());
         telemetry.update();
     }
 
