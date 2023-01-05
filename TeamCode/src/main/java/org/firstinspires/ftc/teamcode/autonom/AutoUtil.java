@@ -21,42 +21,43 @@ public class AutoUtil {
     }
     public static void liftPosition(DcMotorEx liftMotor1, DcMotorEx liftMotor2, AutoPosition pos) {
         if(pos == AutoPosition.HIGH) {
-            liftMotor1.setTargetPosition(-1757);
-            liftMotor2.setTargetPosition(-1764);
+            liftMotor1.setTargetPosition(-1230);
+            liftMotor2.setTargetPosition(-1225);
         }
         else if(pos == AutoPosition.MID) {
-            liftMotor1.setTargetPosition(-1272);
-            liftMotor2.setTargetPosition(-1282);
+            liftMotor1.setTargetPosition(-805);
+            liftMotor2.setTargetPosition(-815);
         }
         else if(pos == AutoPosition.LOW) {
-            liftMotor1.setTargetPosition(-770);
-            liftMotor2.setTargetPosition(-770);
+            liftMotor1.setTargetPosition(-500);
+            liftMotor2.setTargetPosition(-490);
         }
         else if(pos == AutoPosition.ZERO) {
             liftMotor1.setTargetPosition(0);
             liftMotor2.setTargetPosition(0);
         }
-        else if(pos == AutoPosition.CONE5) {
-            liftMotor1.setTargetPosition(-244);
-            liftMotor2.setTargetPosition(-240);
-        }
+        else if(pos == AutoPosition.CONE5)
         else if(pos == AutoPosition.CONE4) {
-            liftMotor1.setTargetPosition(-219);
-            liftMotor2.setTargetPosition(-221);
+            liftMotor1.setTargetPosition(-115);
+            liftMotor2.setTargetPosition(-120);
         }
         else if(pos == AutoPosition.CONE3) {
-            liftMotor1.setTargetPosition(-130);
-            liftMotor2.setTargetPosition(-131);
+            liftMotor1.setTargetPosition(-65);
+            liftMotor2.setTargetPosition(-65);
         }
         else if(pos == AutoPosition.CONE2) {
-            liftMotor1.setTargetPosition(-50);
-            liftMotor2.setTargetPosition(-50);
+            liftMotor1.setTargetPosition(-25);
+            liftMotor2.setTargetPosition(-25);
         }
 
         liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftMotor1.setPower(1f);
         liftMotor2.setPower(1f);
+    }
+    public static void relaxMotor(DcMotorEx liftMotor1, DcMotorEx liftMotor2) {
+        liftMotor1.setPower(0f);
+        liftMotor2.setPower(0f);
     }
     public int getPlatePos(DcMotorEx motor)  {
         int pos = motor.getCurrentPosition();

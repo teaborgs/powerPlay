@@ -1,14 +1,9 @@
 package org.firstinspires.ftc.teamcode.drive.TeleOp;
 
-import android.graphics.Color;
-
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -23,9 +18,7 @@ public class ElectricTeleOp extends LinearOpMode {
     AutoUtil util;
     DcMotorEx liftMotor1,liftMotor2, plateMotor;
     Servo catcher;
-    NormalizedColorSensor sensor;
     double suppress1;
-    NormalizedRGBA colors;
     boolean lr = false;
 
     @Override
@@ -41,8 +34,6 @@ public class ElectricTeleOp extends LinearOpMode {
         liftMotor2 = hardwareMap.get(DcMotorEx.class, "liftMotor2");
         plateMotor = hardwareMap.get(DcMotorEx.class, "plateMotor");
         catcher = hardwareMap.get(Servo.class, "catcherServo");
-        sensor = hardwareMap.get(NormalizedColorSensor.class, "sensor");
-        colors = sensor.getNormalizedColors();
         catcher.setPosition(0);
         liftMotor1.setDirection(DcMotor.Direction.REVERSE);
         liftMotor2.setDirection(DcMotor.Direction.REVERSE);
@@ -244,14 +235,6 @@ public class ElectricTeleOp extends LinearOpMode {
         else
             suppress1 = 1f;
     }
-    int color;
-    private void colorDet() {
-        float max = Math.max(Math.max(Math.max(colors.red, colors.green), colors.blue), colors.alpha);
-        colors.red   /= max;
-        colors.green /= max;
-        colors.blue  /= max;
-        color = colors.toColor();
-    }
 
     private void run(){
         suppressWheels();
@@ -261,7 +244,6 @@ public class ElectricTeleOp extends LinearOpMode {
         controlArm();
         controlCatcher();
         debugTelemetry();
-        colorDet();
     }
 
     private void debugTelemetry(){
