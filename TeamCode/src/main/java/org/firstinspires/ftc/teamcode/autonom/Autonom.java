@@ -63,7 +63,6 @@ public class Autonom extends LinearOpMode {
         params.cameraMonitorFeedback = VuforiaLocalizer.Parameters.CameraMonitorFeedback.AXES;
         params.cameraDirection = VuforiaLocalizer.CameraDirection.BACK; // dubios
         vuforia = classFactory.createVuforia(params);
-        waitForStart();
 
     }
 }

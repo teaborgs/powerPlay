@@ -36,18 +36,21 @@ public class AutoUtil {
             liftMotor1.setTargetPosition(0);
             liftMotor2.setTargetPosition(0);
         }
-        else if(pos == AutoPosition.CONE5)
+        else if(pos == AutoPosition.CONE5) {
+            liftMotor1.setTargetPosition(-196);
+            liftMotor2.setTargetPosition(-192);
+        }
         else if(pos == AutoPosition.CONE4) {
-            liftMotor1.setTargetPosition(-115);
-            liftMotor2.setTargetPosition(-120);
+            liftMotor1.setTargetPosition(-144);
+            liftMotor2.setTargetPosition(-148);
         }
         else if(pos == AutoPosition.CONE3) {
-            liftMotor1.setTargetPosition(-65);
-            liftMotor2.setTargetPosition(-65);
+            liftMotor1.setTargetPosition(-89);
+            liftMotor2.setTargetPosition(-100);
         }
         else if(pos == AutoPosition.CONE2) {
-            liftMotor1.setTargetPosition(-25);
-            liftMotor2.setTargetPosition(-25);
+            liftMotor1.setTargetPosition(-52);
+            liftMotor2.setTargetPosition(-54);
         }
 
         liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
