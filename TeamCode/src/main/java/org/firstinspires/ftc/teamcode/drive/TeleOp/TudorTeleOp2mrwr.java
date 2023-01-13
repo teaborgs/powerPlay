@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.drive.TeleOp;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,11 +9,10 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @TeleOp(group = "Driving")
-public class TudorTeleOp2 extends LinearOpMode {
+public class TudorTeleOp2mrwr extends LinearOpMode {
 
     SampleMecanumDrive mecanumDrive;
     DcMotorEx liftMotor1, liftMotor2, plateMotor;
@@ -38,6 +36,9 @@ public class TudorTeleOp2 extends LinearOpMode {
         plateMotor = hardwareMap.get(DcMotorEx.class, "plateMotor");
         catcher = hardwareMap.get(Servo.class, "catcherServo");
         catcher.setPosition(0);
+        liftMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
+        liftMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
+        plateMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         liftMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -79,6 +80,12 @@ public class TudorTeleOp2 extends LinearOpMode {
         }
     }
 
+    private void resetPlateLocalization() {
+        if(gamepad2.start) {
+            plateMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+
+    }
     private void controlArm() {
         if (gamepad2.left_stick_y != 0) {
             liftMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -257,16 +264,11 @@ public class TudorTeleOp2 extends LinearOpMode {
             plateMotor.setTargetPosition(1423);
             plateMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         }
-        else if(gamepad2.start)
-        {
-            pp = -1423;
-            plateMotor.setTargetPosition(-1423);
-            plateMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        }
     }
 
     private void run() {
         resetArmLocalization();
+        resetPlateLocalization();
         suppressWheels();
         setPlateLevel();
         //setArmPos();

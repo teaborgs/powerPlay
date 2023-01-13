@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 public class AutoUtil {
     SampleMecanumDrive mecanumDrive;
     public static void setClaw(Servo servo, boolean open){
-        double pos = open?0f:0.4f;
+        double pos = open?0f:0.5f;
         servo.setPosition(pos);
 
     }
@@ -21,8 +21,8 @@ public class AutoUtil {
     }
     public static void liftPosition(DcMotorEx liftMotor1, DcMotorEx liftMotor2, AutoPosition pos) {
         if(pos == AutoPosition.HIGH) {
-            liftMotor1.setTargetPosition(-1230);
-            liftMotor2.setTargetPosition(-1225);
+            liftMotor1.setTargetPosition(-1170);
+            liftMotor2.setTargetPosition(-1162);
         }
         else if(pos == AutoPosition.MID) {
             liftMotor1.setTargetPosition(-805);

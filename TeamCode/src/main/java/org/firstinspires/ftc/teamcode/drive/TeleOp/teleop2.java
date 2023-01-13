@@ -84,80 +84,7 @@ public class teleop2 extends LinearOpMode {
         }
     }
 
-
     boolean lastPressedCatch = false;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     private void controlCatcher() {
         executeCurrentMoveTarget();
@@ -165,7 +92,7 @@ public class teleop2 extends LinearOpMode {
         boolean left_bumper1_pressed = gamepad1.left_bumper;
         if (left_bumper1_pressed && !lastPressedCatch) {
             if (catcher.getPosition() == 0) {
-                catcher.setPosition(.4f);
+                catcher.setPosition(.5f);
             } else {
                 catcher.setPosition(0);
                 resetTargets();
@@ -300,7 +227,7 @@ public class teleop2 extends LinearOpMode {
             moveTargets.add(currentTarget);
         } else if (gamepad2.dpad_up) {
             resetTargets();
-            currentTarget = new MoveTarget(liftMotor1, -1230);
+            currentTarget = new MoveTarget(liftMotor1, -1170);
             moveTargets.add(currentTarget);
             currentTarget = new MoveTarget(plateMotor, -1000);
             moveTargets.add(currentTarget);
@@ -331,7 +258,7 @@ public class teleop2 extends LinearOpMode {
             moveTargets.add(currentTarget);
         } else if (gamepad2.y) {
             resetTargets();
-            currentTarget = new MoveTarget(liftMotor1, -1230);
+            currentTarget = new MoveTarget(liftMotor1, -1170);
             moveTargets.add(currentTarget);
             currentTarget = new MoveTarget(plateMotor, 1000);
             moveTargets.add(currentTarget);
@@ -351,7 +278,7 @@ public class teleop2 extends LinearOpMode {
                 liftMotor1.setPower(0.1f);
                 liftMotor2.setPower(0.1f);
             }
-            if ((liftMotor2.getCurrentPosition() >= -500 || liftMotor1.getCurrentPosition() >= -500) && moveTargets.isEmpty() && runtime.milliseconds() > 1000) {
+            if ((liftMotor2.getCurrentPosition() >= -350 || liftMotor1.getCurrentPosition() >= -350) && moveTargets.isEmpty() && runtime.milliseconds() > 1000) {
                 liftMotor1.setPower(0);
                 liftMotor2.setPower(0);
             } else if ((liftMotor2.getCurrentPosition() >= -800 || liftMotor1.getCurrentPosition() >= -800) && moveTargets.isEmpty() && runtime.milliseconds() > 1000) {

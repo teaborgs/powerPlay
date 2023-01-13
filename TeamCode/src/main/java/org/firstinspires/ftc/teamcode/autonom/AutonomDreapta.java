@@ -12,16 +12,16 @@ import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.internal.system.ClassFactoryImpl;
 import org.firstinspires.ftc.teamcode.AutoPosition;
+import org.firstinspires.ftc.teamcode.autonom.Traiectorii.TraiectoriiDreapta;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @Config
 @Autonomous(group = "autonom")
-public class Autonom extends LinearOpMode {
-    SampleMecanumDrive drive;
-    SampleMecanumDrive mecanumDrive;
-    Servo catcher;
-    DcMotorEx liftMotor1, liftMotor2, plateMotor;
-    AutoUtil AutoUtil = new AutoUtil();
+public class AutonomDreapta extends LinearOpMode {
+    public SampleMecanumDrive mecanumDrive;
+    public Servo catcher;
+    public DcMotorEx liftMotor1, liftMotor2, plateMotor;
+    public AutoUtil AutoUtil = new AutoUtil();
     String vuforiaKey = "Aaiq/1//////AAABmR5nE1/0E0LclZpr6AaY5+A2o36In7uJDJ6OQngVynh2aDFKeiUTZQggihn/8KkhWmh5Jnb9cj7GU4nRu0leL6fxUJ4jg2j/4x2W+eVBwqiHHJPwMfYElGUwFiCT9CycVyk+lycCrUcMQrUMe2Aq0kWxMD3xbMDWBVUq2V3ceG6ec9GGYF/HRjVx2FoGFsiuxziwYFY/mKGN8l2kMvYvYdCog0XgHWMi5lfHo/cg0kXeVBYx72I7xD6pXuGMZlf3Lhk61R0iKn0uJ+rnZdc9UWpFhyQTokQDTCiJ5wm3eNShGn5qLSeIyw2w0wLWtLRRBlJEgxc2LOQeDjogMAIiXSvIw6pAbkRR8QflyUpNQ4j5";
 
     VuforiaLocalizer vuforia;
@@ -36,12 +36,13 @@ public class Autonom extends LinearOpMode {
         catcher.setPosition(.4f);
         liftMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         liftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        plateMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         initialize();
         waitForStart();
         while (opModeIsActive()) {
 
-            new AutonomRed(this).runAuto();
+            new TraiectoriiDreapta(this).runAuto();
             telemetry.addData("plateValue", plateMotor.getCurrentPosition());
             telemetry.addData("lift1Value", liftMotor1.getCurrentPosition());
             telemetry.addData("lift1Value", liftMotor2.getCurrentPosition());
