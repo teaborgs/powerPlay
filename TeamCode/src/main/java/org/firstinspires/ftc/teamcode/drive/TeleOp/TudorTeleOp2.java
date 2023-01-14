@@ -167,57 +167,57 @@ public class TudorTeleOp2 extends LinearOpMode {
             liftMotor2.setPower(1f);
             pp = 0;
             plateMotor.setTargetPosition(0);
-        } else if (gamepad2.x) {
-            cp1 = -1272;
+        } else if (gamepad2.b) {
+            cp1 = -507;
             liftMotor1.setTargetPosition(cp1);
             liftMotor1.setPower(1f);
-            cp2 = -1282;
+            cp2 = -487;
             liftMotor2.setTargetPosition(cp2);
             liftMotor2.setPower(1f);
             pp = -1000;
             plateMotor.setTargetPosition(-1000);
-        } else if (gamepad2.b) {
-            cp1 = -770;
+        } else if (gamepad2.x) {
+            cp1 = -806;
             liftMotor1.setTargetPosition(cp1);
             liftMotor1.setPower(1f);
-            cp2 = -770;
+            cp2 = -789;
             liftMotor2.setTargetPosition(cp2);
             liftMotor2.setPower(1f);
             pp = -1000;
             plateMotor.setTargetPosition(-1000);
         } else if (gamepad2.y) {
-            cp1 = -1757;
+            cp1 = -1174;
             liftMotor1.setTargetPosition(cp1);
             liftMotor1.setPower(1f);
-            cp2 = -1764;
+            cp2 = -1160;
             liftMotor2.setTargetPosition(cp2);
             liftMotor2.setPower(1f);
             pp = -1000;
             plateMotor.setTargetPosition(-1000);
         } else if (gamepad2.dpad_up) {
-            cp1 = -1757;
+            cp1 = -1174;
             liftMotor1.setTargetPosition(cp1);
             liftMotor1.setPower(1f);
-            cp2 = -1764;
+            cp2 = -1160;
             liftMotor2.setTargetPosition(cp2);
             liftMotor2.setPower(1f);
             pp = 1000;
             plateMotor.setTargetPosition(1000);
         } else if(gamepad2.dpad_left) {
-            cp1 = -1272;
+            cp1 = -806;
             liftMotor1.setTargetPosition(cp1);
             liftMotor1.setPower(1f);
-            cp2 = -1282;
+            cp2 = -789;
             liftMotor2.setTargetPosition(cp2);
             liftMotor2.setPower(1f);
             pp = 1000;
             plateMotor.setTargetPosition(1000);
         }
         else if(gamepad2.dpad_right) {
-            cp1 = -770;
+            cp1 = -507;
             liftMotor1.setTargetPosition(cp1);
             liftMotor1.setPower(1f);
-            cp2 = -770;
+            cp2 = -487;
             liftMotor2.setTargetPosition(cp2);
             liftMotor2.setPower(1f);
             pp = 1000;

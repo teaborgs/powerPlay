@@ -51,7 +51,7 @@ public class AutonomStanga extends LinearOpMode {
     public Servo catcher;
     public DcMotorEx liftMotor1, liftMotor2, plateMotor;
     public AutoUtil AutoUtil = new AutoUtil();
-    int detected;
+    int detected = 3;
     @Override
     public void runOpMode() throws InterruptedException {
         liftMotor1 = hardwareMap.get(DcMotorEx.class, "liftMotor1");
@@ -93,12 +93,8 @@ public class AutonomStanga extends LinearOpMode {
             telemetry.addData("obiect", detected);
             telemetry.update();
         }
-        while (opModeIsActive()) {
+        while (opModeIsActive() && !isStopRequested()) {
             new TraiectoriiStanga(this).runAuto(detected);
-            telemetry.addData("plateValue", plateMotor.getCurrentPosition());
-            telemetry.addData("lift1Value", liftMotor1.getCurrentPosition());
-            telemetry.addData("lift1Value", liftMotor2.getCurrentPosition());
-            telemetry.update();
             sleep(30000);
         }
     }

@@ -73,7 +73,7 @@ public class TraiectoriiStanga {
                 .build();
         deliverCone4 = auto.mecanumDrive
                 .trajectorySequenceBuilder(catchCone4.end())
-                .back(30.1)
+                .back(30)
                 .addTemporalMarker(0, () -> AutoUtil.liftPosition(auto.liftMotor1, auto.liftMotor2, AutoPosition.HIGH))
                 .addTemporalMarker(.6, () -> AutoUtil.platePosition(auto.plateMotor,-423))
                 .build();
@@ -99,17 +99,17 @@ public class TraiectoriiStanga {
                 .build();
         park2 = auto.mecanumDrive
                 .trajectorySequenceBuilder(deliverCone5.end())
+                .forward(13)
                 .turn(Math.toRadians(90))
-                .strafeRight(6)
                 .addTemporalMarker(.0, () -> AutoUtil.platePosition(auto.plateMotor,-1423))
-                .addTemporalMarker(1.4, () -> AutoUtil.liftPosition(auto.liftMotor1, auto.liftMotor2, AutoPosition.ZERO))
+                .addTemporalMarker(1.7, () -> AutoUtil.liftPosition(auto.liftMotor1, auto.liftMotor2, AutoPosition.ZERO))
                 .build();
         park1 = auto.mecanumDrive
                 .trajectorySequenceBuilder(deliverCone5.end())
-                .back(9.9)
+                .forward(32)
                 .turn(Math.toRadians(90))
                 .addTemporalMarker(.0, () -> AutoUtil.platePosition(auto.plateMotor,-1423))
-                .addTemporalMarker(1.4, () -> AutoUtil.liftPosition(auto.liftMotor1, auto.liftMotor2, AutoPosition.ZERO))
+                .addTemporalMarker(2, () -> AutoUtil.liftPosition(auto.liftMotor1, auto.liftMotor2, AutoPosition.ZERO))
                 .build();
     }
 
@@ -131,7 +131,7 @@ public class TraiectoriiStanga {
         auto.AutoUtil.setClaw(auto.catcher,false);
         auto.sleep(250);
         auto.mecanumDrive.followTrajectorySequence(deliverCone2);
-        auto.sleep(100);
+        auto.sleep(150);
         auto.AutoUtil.setClaw(auto.catcher,true);
         auto.sleep(100);
         auto.mecanumDrive.followTrajectorySequence(catchCone3);
@@ -139,7 +139,7 @@ public class TraiectoriiStanga {
         auto.AutoUtil.setClaw(auto.catcher,false);
         auto.sleep(250);
         auto.mecanumDrive.followTrajectorySequence(deliverCone3);
-        auto.sleep(100);
+        auto.sleep(150);
         auto.AutoUtil.setClaw(auto.catcher,true);
         auto.sleep(100);
         auto.mecanumDrive.followTrajectorySequence(catchCone4);
@@ -147,7 +147,7 @@ public class TraiectoriiStanga {
         auto.AutoUtil.setClaw(auto.catcher,false);
         auto.sleep(250);
         auto.mecanumDrive.followTrajectorySequence(deliverCone4);
-        auto.sleep(100);
+        auto.sleep(150);
         auto.AutoUtil.setClaw(auto.catcher,true);
         auto.sleep(150);
         auto.mecanumDrive.followTrajectorySequence(catchCone5);
@@ -161,6 +161,5 @@ public class TraiectoriiStanga {
         if(detected == 2) auto.mecanumDrive.followTrajectorySequence(park2);
         else if(detected == 1) auto.mecanumDrive.followTrajectorySequence(park1);
         else auto.mecanumDrive.followTrajectorySequence(park3);
-        auto.sleep(30000);
     }
 }

@@ -22,7 +22,7 @@ public class AutoUtil {
     public static void liftPosition(DcMotorEx liftMotor1, DcMotorEx liftMotor2, AutoPosition pos) {
         if(pos == AutoPosition.HIGH) {
             liftMotor1.setTargetPosition(-1170);
-            liftMotor2.setTargetPosition(-1162);
+            liftMotor2.setTargetPosition(-1170);
         }
         else if(pos == AutoPosition.MID) {
             liftMotor1.setTargetPosition(-805);

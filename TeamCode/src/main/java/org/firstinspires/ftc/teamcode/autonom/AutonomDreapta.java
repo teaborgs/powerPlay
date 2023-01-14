@@ -8,25 +8,51 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.internal.system.ClassFactoryImpl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.AutoPosition;
+import org.firstinspires.ftc.teamcode.autonom.OpenCV.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.autonom.Traiectorii.TraiectoriiDreapta;
+import org.firstinspires.ftc.teamcode.autonom.Traiectorii.TraiectoriiStanga;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.openftc.apriltag.AprilTagDetection;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+
+import java.util.ArrayList;
 
 @Config
 @Autonomous(group = "autonom")
 public class AutonomDreapta extends LinearOpMode {
+
+    OpenCvCamera camera;
+    AprilTagDetectionPipeline aprilTagDetectionPipeline;
+
+    static final double FEET_PER_METER = 3.28084;
+    int cameraMonitorViewId = 0;
+    // Lens intrinsics
+    // UNITS ARE PIXELS
+    // NOTE: this calibration is for the C920 webcam at 800x448.
+    // You will need to do your own calibration for other configurations!
+    double fx = 578.272;
+    double fy = 578.272;
+    double cx = 402.145;
+    double cy = 221.506;
+
+    // UNITS ARE METERS
+    double tagsize = 0.166;
+
+    int Left = 1;
+    int Middle = 2;
+    int Right = 3;
+
+    public AprilTagDetection tagOfInterest = null;
+
     public SampleMecanumDrive mecanumDrive;
     public Servo catcher;
     public DcMotorEx liftMotor1, liftMotor2, plateMotor;
     public AutoUtil AutoUtil = new AutoUtil();
-    String vuforiaKey = "Aaiq/1//////AAABmR5nE1/0E0LclZpr6AaY5+A2o36In7uJDJ6OQngVynh2aDFKeiUTZQggihn/8KkhWmh5Jnb9cj7GU4nRu0leL6fxUJ4jg2j/4x2W+eVBwqiHHJPwMfYElGUwFiCT9CycVyk+lycCrUcMQrUMe2Aq0kWxMD3xbMDWBVUq2V3ceG6ec9GGYF/HRjVx2FoGFsiuxziwYFY/mKGN8l2kMvYvYdCog0XgHWMi5lfHo/cg0kXeVBYx72I7xD6pXuGMZlf3Lhk61R0iKn0uJ+rnZdc9UWpFhyQTokQDTCiJ5wm3eNShGn5qLSeIyw2w0wLWtLRRBlJEgxc2LOQeDjogMAIiXSvIw6pAbkRR8QflyUpNQ4j5";
-
-    VuforiaLocalizer vuforia;
-
-    ClassFactory classFactory = new ClassFactoryImpl(); // idk
+    int detected = 3;
     @Override
     public void runOpMode() throws InterruptedException {
         liftMotor1 = hardwareMap.get(DcMotorEx.class, "liftMotor1");
@@ -38,16 +64,54 @@ public class AutonomDreapta extends LinearOpMode {
         liftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         plateMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-        initialize();
-        waitForStart();
-        while (opModeIsActive()) {
+        cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
-            new TraiectoriiDreapta(this).runAuto();
-            telemetry.addData("plateValue", plateMotor.getCurrentPosition());
-            telemetry.addData("lift1Value", liftMotor1.getCurrentPosition());
-            telemetry.addData("lift1Value", liftMotor2.getCurrentPosition());
+        camera.setPipeline(aprilTagDetectionPipeline);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode)
+            {
+
+            }
+        });
+
+        telemetry.setMsTransmissionInterval(50);
+
+        initialize();
+        while (!isStarted() && !isStopRequested()) {
+            detectie();
+            if(tagOfInterest != null)
+                detected = tagOfInterest.id;
+            telemetry.addData("obiect", detected);
             telemetry.update();
+        }
+        while (opModeIsActive() && !isStopRequested()) {
+            new TraiectoriiDreapta(this).runAuto(detected);
             sleep(30000);
+        }
+    }
+    void detectie() {
+        ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+
+        if(currentDetections.size() != 0) {
+            boolean tagFound = false;
+
+            for (AprilTagDetection tag : currentDetections) {
+                if (tag.id == Left || tag.id == Middle || tag.id == Right) {
+                    tagOfInterest = tag;
+                    tagFound = true;
+                    break;
+                }
+            }
         }
     }
     private void initialize(){
@@ -57,13 +121,5 @@ public class AutonomDreapta extends LinearOpMode {
         mecanumDrive = new SampleMecanumDrive(hardwareMap);
         mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
         AutoUtil.setClaw(catcher,false);
-        AutoUtil.liftPosition(liftMotor1, liftMotor2, AutoPosition.CONE2);
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        VuforiaLocalizer.Parameters params = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
-        params.vuforiaLicenseKey = vuforiaKey;
-        params.cameraMonitorFeedback = VuforiaLocalizer.Parameters.CameraMonitorFeedback.AXES;
-        params.cameraDirection = VuforiaLocalizer.CameraDirection.BACK; // dubios
-        vuforia = classFactory.createVuforia(params);
-
     }
 }
