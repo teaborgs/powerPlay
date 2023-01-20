@@ -85,32 +85,40 @@ public class TudorTeleOp2 extends LinearOpMode {
             cp1 = liftMotor1.getCurrentPosition();
             liftMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             cp2 = liftMotor2.getCurrentPosition();
-            if(liftMotor1.getTargetPosition() >= 0f && gamepad2.left_stick_y > 0) liftMotor1.setPower(0f);
-            else liftMotor1.setPower(1f * gamepad2.left_stick_y);
-            if(liftMotor2.getTargetPosition() >= 0f && gamepad2.left_stick_y > 0) liftMotor2.setPower(0f);
-            else liftMotor2.setPower(1f * gamepad2.left_stick_y);
+            if(liftMotor1.getTargetPosition() >= 0f && gamepad2.left_stick_y > 0) {
+                liftMotor1.setPower(0f);
+                liftMotor2.setPower(0f);
+            }
+            else {
+                liftMotor1.setPower(1f * gamepad2.left_stick_y);
+                liftMotor2.setPower(1f * gamepad2.left_stick_y);
+            }
         } else   {
             liftMotor1.setTargetPosition(cp1);
             liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor2.setTargetPosition(cp2);
             liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            if(liftMotor1.isBusy()) {
-                if (liftMotor1.getCurrentPosition() > -10 && liftMotor1.getTargetPosition() > -10)
+            if(liftMotor1.isBusy() || liftMotor2.isBusy()) {
+                if (liftMotor1.getCurrentPosition() > -10 && liftMotor1.getTargetPosition() > -10
+                || liftMotor2.getCurrentPosition() > -10 && liftMotor2.getTargetPosition() > -10) {
                     liftMotor1.setPower(0f);
-                else liftMotor1.setPower(1f);
+                    liftMotor2.setPower(0f);
+                }
+                else {
+                    liftMotor1.setPower(1f);
+                    liftMotor2.setPower(1f);
+                }
             } else {
-                if (liftMotor1.getCurrentPosition() > -10 && liftMotor1.getTargetPosition() > -10)
+                if (liftMotor1.getCurrentPosition() > -10 && liftMotor1.getTargetPosition() > -10
+                || liftMotor2.getCurrentPosition() > -10 && liftMotor2.getTargetPosition() > -10)
+                {
                     liftMotor1.setPower(0f);
-                else liftMotor1.setPower(0.1f);
-            }
-            if(liftMotor2.isBusy()) {
-                if (liftMotor2.getCurrentPosition() > -10 && liftMotor2.getTargetPosition() > -10)
                     liftMotor2.setPower(0f);
-                else liftMotor2.setPower(1f);
-            } else {
-                if (liftMotor2.getCurrentPosition() > -10 && liftMotor2.getTargetPosition() > -10)
-                    liftMotor2.setPower(0f);
-                else liftMotor2.setPower(0.1f);
+                }
+                else {
+                    liftMotor1.setPower(0.1f);
+                    liftMotor2.setPower(0.1f);
+                }
             }
         }
         if (gamepad2.right_trigger != 0 || gamepad2.left_trigger != 0) {

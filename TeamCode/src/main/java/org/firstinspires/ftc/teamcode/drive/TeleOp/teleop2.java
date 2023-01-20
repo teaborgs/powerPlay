@@ -92,7 +92,7 @@ public class teleop2 extends LinearOpMode {
         boolean left_bumper1_pressed = gamepad1.left_bumper;
         if (left_bumper1_pressed && !lastPressedCatch) {
             if (catcher.getPosition() == 0) {
-                catcher.setPosition(.5f);
+                catcher.setPosition(.6f);
             } else {
                 catcher.setPosition(0);
                 resetTargets();
@@ -240,7 +240,7 @@ public class teleop2 extends LinearOpMode {
             moveTargets.add(currentTarget);
         } else if (gamepad2.x) {
             resetTargets();
-            currentTarget = new MoveTarget(liftMotor1, -805);
+            currentTarget = new MoveTarget(liftMotor1, -820);
             moveTargets.add(currentTarget);
             currentTarget = new MoveTarget(plateMotor, 1000);
             moveTargets.add(currentTarget);
@@ -275,15 +275,16 @@ public class teleop2 extends LinearOpMode {
     private void relax() {
             if (moveTargets.isEmpty() && runtime.milliseconds() > 1000) {
                 plateMotor.setPower(0);
-                liftMotor1.setPower(0.1f);
-                liftMotor2.setPower(0.1f);
             }
             if ((liftMotor2.getCurrentPosition() >= -350 || liftMotor1.getCurrentPosition() >= -350) && moveTargets.isEmpty() && runtime.milliseconds() > 1000) {
-                liftMotor1.setPower(0);
-                liftMotor2.setPower(0);
+                    liftMotor1.setPower(0);
+                    liftMotor2.setPower(0);
             } else if ((liftMotor2.getCurrentPosition() >= -800 || liftMotor1.getCurrentPosition() >= -800) && moveTargets.isEmpty() && runtime.milliseconds() > 1000) {
-                liftMotor1.setPower(0.05f);
-                liftMotor2.setPower(0.05f);
+            liftMotor1.setPower(0.05f);
+            liftMotor2.setPower(0.05f);
+            } else if(moveTargets.isEmpty() && runtime.milliseconds() > 1000){
+                liftMotor1.setPower(0.1f);
+                liftMotor2.setPower(0.1f);
             }
     }
 }

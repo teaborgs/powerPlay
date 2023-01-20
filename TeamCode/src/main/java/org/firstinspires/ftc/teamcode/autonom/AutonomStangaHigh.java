@@ -9,9 +9,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.AutoPosition;
 import org.firstinspires.ftc.teamcode.autonom.OpenCV.AprilTagDetectionPipeline;
-import org.firstinspires.ftc.teamcode.autonom.Traiectorii.TraiectoriiStanga;
+import org.firstinspires.ftc.teamcode.autonom.Traiectorii.TraiectoriiStangaHigh;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -22,7 +21,7 @@ import java.util.ArrayList;
 
 @Config
 @Autonomous(group = "autonom")
-public class AutonomStanga extends LinearOpMode {
+public class AutonomStangaHigh extends LinearOpMode {
 
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -58,7 +57,6 @@ public class AutonomStanga extends LinearOpMode {
         liftMotor2 = hardwareMap.get(DcMotorEx.class, "liftMotor2");
         plateMotor = hardwareMap.get(DcMotorEx.class, "plateMotor");
         catcher = hardwareMap.get(Servo.class, "catcherServo");
-        catcher.setPosition(.4f);
         liftMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         liftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         plateMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -94,7 +92,7 @@ public class AutonomStanga extends LinearOpMode {
             telemetry.update();
         }
         while (opModeIsActive() && !isStopRequested()) {
-            new TraiectoriiStanga(this).runAuto(detected);
+            new TraiectoriiStangaHigh(this).runAuto(detected);
             sleep(30000);
         }
     }
@@ -115,10 +113,14 @@ public class AutonomStanga extends LinearOpMode {
     }
     private void initialize(){
         liftMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         plateMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        plateMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER); /// era fara encoder
         mecanumDrive = new SampleMecanumDrive(hardwareMap);
         mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
+        mecanumDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         AutoUtil.setClaw(catcher,false);
     }
 }

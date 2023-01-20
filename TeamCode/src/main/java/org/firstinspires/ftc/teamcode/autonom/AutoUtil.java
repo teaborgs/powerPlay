@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 public class AutoUtil {
     SampleMecanumDrive mecanumDrive;
     public static void setClaw(Servo servo, boolean open){
-        double pos = open?0f:0.5f;
+        double pos = open?0f:0.6f;
         servo.setPosition(pos);
 
     }
