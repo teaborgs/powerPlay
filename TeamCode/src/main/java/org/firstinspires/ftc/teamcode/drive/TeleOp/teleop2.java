@@ -215,7 +215,7 @@ public class teleop2 extends LinearOpMode {
             moveTargets.add(currentTarget);
         } else if (gamepad2.dpad_left) {
             resetTargets();
-            currentTarget = new MoveTarget(liftMotor1, -805);
+            currentTarget = new MoveTarget(liftMotor1, -820);
             moveTargets.add(currentTarget);
             currentTarget = new MoveTarget(plateMotor, -1000);
             moveTargets.add(currentTarget);

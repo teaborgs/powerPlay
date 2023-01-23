@@ -20,6 +20,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
 @Config
+
+
 @Autonomous(group = "autonom")
 public class AutonomStangaHigh extends LinearOpMode {
 
