@@ -1,20 +1,21 @@
 package org.firstinspires.ftc.teamcode.autonom.Traiectorii;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 
 import org.firstinspires.ftc.teamcode.AutoPosition;
 import org.firstinspires.ftc.teamcode.autonom.AutoUtil;
 import org.firstinspires.ftc.teamcode.autonom.AutonomStangaHigh;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
-public class TraiectoriiStangaHigh {
+public class TraiectoriiStangaHighTest {
     AutonomStangaHigh auto;
     TrajectorySequence deliverPreload,catchCone1,deliverCone1, deliverCone2, catchCone2,catchCone3,catchCone4,catchCone5,deliverCone3,deliverCone4,deliverCone5,park1,park2,park3;
-
-    public TraiectoriiStangaHigh(AutonomStangaHigh auto){
+    public TraiectoriiStangaHighTest(AutonomStangaHigh auto){
         this.auto = auto;
         initializeTrajectories();
     }
+    Trajectory catchCone;
 
     private void initializeTrajectories(){
         deliverPreload = auto.mecanumDrive
@@ -51,7 +52,7 @@ public class TraiectoriiStangaHigh {
         catchCone3 = auto.mecanumDrive
                 .trajectorySequenceBuilder(new Pose2d())
                 ///.strafeLeft(0.1)
-                .strafeRight(0.1)
+                .strafeRight(0.15)
                 .forward(29.85)
                 .addTemporalMarker(0, () -> AutoUtil.platePosition(auto.plateMotor,-1423))
                 .addTemporalMarker(.3, () -> AutoUtil.liftPosition(auto.liftMotor1, auto.liftMotor2, AutoPosition.CONE3))
@@ -107,7 +108,11 @@ public class TraiectoriiStangaHigh {
                 .turn(Math.toRadians(90))
                 .addTemporalMarker(1.8, () -> AutoUtil.platePosition(auto.plateMotor,-1423))
                 .addTemporalMarker(2.4, () -> AutoUtil.liftPosition(auto.liftMotor1, auto.liftMotor2, AutoPosition.ZERO))
-               /// .addTemporalMarker(2, () -> AutoUtil.liftPosition(auto.liftMotor1, auto.liftMotor2, AutoPosition.ZERO))
+                /// .addTemporalMarker(2, () -> AutoUtil.liftPosition(auto.liftMotor1, auto.liftMotor2, AutoPosition.ZERO))
+                .build();
+        catchCone = auto.mecanumDrive
+                .trajectoryBuilder(new Pose2d())
+                .forward(0.1)
                 .build();
     }
 
@@ -116,60 +121,7 @@ public class TraiectoriiStangaHigh {
         auto.mecanumDrive.followTrajectorySequence(deliverPreload);
         auto.mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
         auto.sleep(300);
-        auto.AutoUtil.setClaw(auto.catcher,true);
-        auto.sleep(200);
-        auto.mecanumDrive.followTrajectorySequence(catchCone1);
-        auto.mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
-        auto.sleep(100);
-        auto.AutoUtil.setClaw(auto.catcher,false);
-        auto.sleep(250);
-        auto.mecanumDrive.followTrajectorySequence(deliverCone1);
-        auto.mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
-        auto.sleep(200);
-        auto.AutoUtil.setClaw(auto.catcher,true);
-        auto.sleep(100);
-        auto.mecanumDrive.followTrajectorySequence(catchCone2);
-        auto.mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
-        auto.sleep(100);
-        auto.AutoUtil.setClaw(auto.catcher,false);
-        auto.sleep(250);
-        auto.mecanumDrive.followTrajectorySequence(deliverCone2);
-        auto.mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
-        auto.sleep(200);
-        auto.AutoUtil.setClaw(auto.catcher,true);
-        auto.sleep(100);
-        auto.mecanumDrive.followTrajectorySequence(catchCone3);
-        auto.mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
-        auto.sleep(100);
-        auto.AutoUtil.setClaw(auto.catcher,false);
-        auto.sleep(250);
-        auto.mecanumDrive.followTrajectorySequence(deliverCone3);
-        auto.mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
-        auto.sleep(200);
-        auto.AutoUtil.setClaw(auto.catcher,true);
-        auto.sleep(100);
-        auto.mecanumDrive.followTrajectorySequence(catchCone4);
-        auto.mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
-        auto.sleep(100);
-        auto.AutoUtil.setClaw(auto.catcher,false);
-        auto.sleep(250);
-        auto.mecanumDrive.followTrajectorySequence(deliverCone4);
-        auto.mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
-        auto.sleep(200);
-        auto.AutoUtil.setClaw(auto.catcher,true);
-        auto.sleep(150);
-        auto.mecanumDrive.followTrajectorySequence(catchCone5);
-        auto.mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
-        auto.sleep(150);
-        auto.AutoUtil.setClaw(auto.catcher,false);
-        auto.sleep(250);
-        auto.mecanumDrive.followTrajectorySequence(deliverCone5);
-        auto.mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
-        auto.sleep(200);
-        auto.AutoUtil.setClaw(auto.catcher,true);
-        auto.sleep(100);
-        if(detected == 2) auto.mecanumDrive.followTrajectorySequence(park2);
-        else if(detected == 1) auto.mecanumDrive.followTrajectorySequence(park1);
-        else auto.mecanumDrive.followTrajectorySequence(park3);
+        while(auto.AutoUtil.colorDet(auto.sensor) == false)
+            auto.mecanumDrive.followTrajectory(catchCone);
     }
 }

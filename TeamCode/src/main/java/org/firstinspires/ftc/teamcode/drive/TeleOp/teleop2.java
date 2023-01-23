@@ -85,14 +85,30 @@ public class teleop2 extends LinearOpMode {
     }
 
     boolean lastPressedCatch = false;
-
+    boolean conuri = false;
+    boolean sus = false;
+    ElapsedTime timpCon = new ElapsedTime();
     private void controlCatcher() {
         executeCurrentMoveTarget();
         MoveTarget currentTarget;
+        if(sus) {
+            if(timpCon.milliseconds() > 1000) {
+                resetTargets();
+                currentTarget = new MoveTarget(liftMotor1, -300);
+                moveTargets.add(currentTarget);
+                sus = false;
+                timpCon.reset();
+            }
+        }
         boolean left_bumper1_pressed = gamepad1.left_bumper;
         if (left_bumper1_pressed && !lastPressedCatch) {
             if (catcher.getPosition() == 0) {
+                timpCon.reset();
                 catcher.setPosition(.6f);
+                if(conuri){
+                    sus = true;
+                    conuri = false;
+                }
             } else {
                 catcher.setPosition(0);
                 resetTargets();
@@ -114,14 +130,6 @@ public class teleop2 extends LinearOpMode {
         } else {
             suppress1 = 1f;
             suppressRotate = 1f;
-        }
-    }
-
-    private void autonomousArm() {
-        if (gamepad2.back) {
-            pp = 1423;
-            plateMotor.setTargetPosition(1423);
-            plateMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         }
     }
 
@@ -148,6 +156,7 @@ public class teleop2 extends LinearOpMode {
         telemetry.addData("motorBusy2", liftMotor2.isBusy());
         telemetry.addData("plateBusy1", plateMotor.isBusy());
         telemetry.addData("platePower", plateMotor.getPower());
+        telemetry.addData("timpCon", timpCon.milliseconds());
         telemetry.update();
     }
 
@@ -207,7 +216,23 @@ public class teleop2 extends LinearOpMode {
     private void controlArm() {
         executeCurrentMoveTarget();
         MoveTarget currentTarget;
-        if (gamepad2.a) {
+        if(gamepad2.start) {
+            resetTargets();
+            conuri = true;
+            currentTarget = new MoveTarget(plateMotor, 0);
+            moveTargets.add(currentTarget);
+            currentTarget = new MoveTarget(liftMotor1, -148);
+            moveTargets.add(currentTarget);
+        }
+        else if(gamepad2.back) {
+            resetTargets();
+            conuri = true;
+            currentTarget = new MoveTarget(plateMotor, 0);
+            moveTargets.add(currentTarget);
+            currentTarget = new MoveTarget(liftMotor1, -89);
+            moveTargets.add(currentTarget);
+        }
+        else if (gamepad2.a) {
             resetTargets();
             currentTarget = new MoveTarget(plateMotor, 0);
             moveTargets.add(currentTarget);

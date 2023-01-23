@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.autonom;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -52,6 +53,7 @@ public class AutonomStangaHigh extends LinearOpMode {
     public Servo catcher;
     public DcMotorEx liftMotor1, liftMotor2, plateMotor;
     public AutoUtil AutoUtil = new AutoUtil();
+    public RevColorSensorV3 sensor;
     int detected = 3;
     @Override
     public void runOpMode() throws InterruptedException {
@@ -59,6 +61,7 @@ public class AutonomStangaHigh extends LinearOpMode {
         liftMotor2 = hardwareMap.get(DcMotorEx.class, "liftMotor2");
         plateMotor = hardwareMap.get(DcMotorEx.class, "plateMotor");
         catcher = hardwareMap.get(Servo.class, "catcherServo");
+        sensor = hardwareMap.get(RevColorSensorV3.class, "sensor");
         liftMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         liftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         plateMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);

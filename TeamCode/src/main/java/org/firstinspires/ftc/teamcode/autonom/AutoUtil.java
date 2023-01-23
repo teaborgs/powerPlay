@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.autonom;
 
+import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -65,6 +67,11 @@ public class AutoUtil {
     public int getPlatePos(DcMotorEx motor)  {
         int pos = motor.getCurrentPosition();
         return pos;
+    }
+    public boolean colorDet(RevColorSensorV3 sensor) {
+        if(sensor.red() > sensor.blue() && sensor.red() > sensor.green())
+            return true;
+        return false;
     }
 
 }
