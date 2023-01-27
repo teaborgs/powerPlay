@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.autonom;
+package org.firstinspires.ftc.teamcode.drive.advanced;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -10,9 +10,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.autonom.AutoUtil;
+import org.firstinspires.ftc.teamcode.drive.advanced.SampleMecanumDriveCancelable;
 import org.firstinspires.ftc.teamcode.autonom.OpenCV.AprilTagDetectionPipeline;
-import org.firstinspires.ftc.teamcode.autonom.Traiectorii.TraiectoriiStangaHigh;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -24,7 +24,7 @@ import java.util.ArrayList;
 
 
 @Autonomous(group = "autonom")
-public class AutonomStangaHigh extends LinearOpMode {
+public class AutonomStangaHighTest extends LinearOpMode {
 
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -49,10 +49,10 @@ public class AutonomStangaHigh extends LinearOpMode {
 
     public AprilTagDetection tagOfInterest = null;
 
-    public SampleMecanumDrive mecanumDrive;
+    public SampleMecanumDriveCancelable mecanumDrive;
     public Servo catcher;
     public DcMotorEx liftMotor1, liftMotor2, plateMotor;
-    public AutoUtil AutoUtil = new AutoUtil();
+    public org.firstinspires.ftc.teamcode.autonom.AutoUtil AutoUtil = new AutoUtil();
     public RevColorSensorV3 sensor;
     int detected = 3;
     @Override
@@ -76,7 +76,7 @@ public class AutonomStangaHigh extends LinearOpMode {
             @Override
             public void onOpened()
             {
-                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(1280,720, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -97,7 +97,7 @@ public class AutonomStangaHigh extends LinearOpMode {
             telemetry.update();
         }
         while (opModeIsActive() && !isStopRequested()) {
-            new TraiectoriiStangaHigh(this).runAuto(detected);
+            new TraiectoriiStangaHighTest(this).runAuto(detected);
             sleep(30000);
         }
     }
@@ -117,13 +117,13 @@ public class AutonomStangaHigh extends LinearOpMode {
         }
     }
     private void initialize(){
-        liftMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        liftMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         plateMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         plateMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER); /// era fara encoder
-        mecanumDrive = new SampleMecanumDrive(hardwareMap);
+        mecanumDrive = new SampleMecanumDriveCancelable(hardwareMap);
         mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
         mecanumDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         AutoUtil.setClaw(catcher,false);

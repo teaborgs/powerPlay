@@ -69,7 +69,7 @@ public class AutoUtil {
         return pos;
     }
     public boolean colorDet(RevColorSensorV3 sensor) {
-        if(sensor.red() > sensor.blue() && sensor.red() > sensor.green())
+        if(sensor.red() > sensor.blue() && sensor.red() > sensor.green() && sensor.red()>500)
             return true;
         return false;
     }
