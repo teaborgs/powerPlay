@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.AutoPosition;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
@@ -27,8 +28,8 @@ public class AutoUtil {
             liftMotor2.setTargetPosition(-1170);
         }
         else if(pos == AutoPosition.MID) {
-            liftMotor1.setTargetPosition(-820);
-            liftMotor2.setTargetPosition(-820);
+            liftMotor1.setTargetPosition(-815);
+            liftMotor2.setTargetPosition(-815);
         }
         else if(pos == AutoPosition.LOW) {
             liftMotor1.setTargetPosition(-500);
@@ -68,8 +69,8 @@ public class AutoUtil {
         int pos = motor.getCurrentPosition();
         return pos;
     }
-    public boolean colorDet(RevColorSensorV3 sensor) {
-        if(sensor.red() > sensor.blue() && sensor.red() > sensor.green() && sensor.red()>500)
+    public static boolean colorDet(RevColorSensorV3 sensor) {
+        if (sensor.red() > sensor.blue() && sensor.red()>sensor.green() && sensor.getDistance(DistanceUnit.CM) <= 14)
             return true;
         return false;
     }

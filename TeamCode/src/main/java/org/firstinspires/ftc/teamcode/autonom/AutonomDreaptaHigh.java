@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.autonom.OpenCV.AprilTagDetectionPipeline;
-import org.firstinspires.ftc.teamcode.autonom.Traiectorii.TraiectoriiDreapta;
+import org.firstinspires.ftc.teamcode.autonom.Traiectorii.TraiectoriiDreaptaHigh;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 @Config
 @Autonomous(group = "autonom")
-public class AutonomDreapta extends LinearOpMode {
+public class AutonomDreaptaHigh extends LinearOpMode {
 
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -93,7 +93,7 @@ public class AutonomDreapta extends LinearOpMode {
             telemetry.update();
         }
         while (opModeIsActive() && !isStopRequested()) {
-            new TraiectoriiDreapta(this).runAuto(detected);
+            new TraiectoriiDreaptaHigh(this).runAuto(detected);
             sleep(30000);
         }
     }

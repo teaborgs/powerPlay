@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 public class TudorTeleOp2 extends LinearOpMode {
 
     SampleMecanumDrive mecanumDrive;
+    RevColorSensorV3 sensor;
     DcMotorEx liftMotor1, liftMotor2, plateMotor;
     Servo catcher;
     double suppress1;
@@ -37,6 +38,7 @@ public class TudorTeleOp2 extends LinearOpMode {
         liftMotor2 = hardwareMap.get(DcMotorEx.class, "liftMotor2");
         plateMotor = hardwareMap.get(DcMotorEx.class, "plateMotor");
         catcher = hardwareMap.get(Servo.class, "catcherServo");
+        sensor = hardwareMap.get(RevColorSensorV3.class, "sensor");
         catcher.setPosition(0);
         liftMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -162,7 +164,18 @@ public class TudorTeleOp2 extends LinearOpMode {
         if(gamepad2.right_bumper || gamepad2.left_bumper || gamepad2.dpad_up)
             plateMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
     }
-
+    private void liftLevel() {
+        pp = 0;
+        plateMotor.setTargetPosition(0);
+        cp1 = 0;
+        liftMotor1.setTargetPosition(cp1);
+        liftMotor1.setPower(1f);
+        cp2 = 0;
+        liftMotor2.setTargetPosition(cp2);
+        liftMotor2.setPower(1f);
+        pp = 0;
+        plateMotor.setTargetPosition(0);
+    }
     private void setLiftLevel() {
         if (gamepad2.a) {
             pp = 0;
@@ -297,6 +310,12 @@ public class TudorTeleOp2 extends LinearOpMode {
         telemetry.addData("motorBusy2", liftMotor2.isBusy());
         telemetry.addData("plateBusy1", plateMotor.isBusy());
         telemetry.addData("platePower", plateMotor.getPower());
+        telemetry.addData("X input", gamepad1.left_stick_x);
+        telemetry.addData("Y input", gamepad1.left_stick_y);
+        telemetry.addLine("culori")
+                .addData("red", sensor.red())
+                .addData("green", sensor.green())
+                .addData("blue",sensor.blue());
         telemetry.update();
     }
 

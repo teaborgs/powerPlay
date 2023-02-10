@@ -91,24 +91,10 @@ public class teleop2 extends LinearOpMode {
     private void controlCatcher() {
         executeCurrentMoveTarget();
         MoveTarget currentTarget;
-        if(sus) {
-            if(timpCon.milliseconds() > 1000) {
-                resetTargets();
-                currentTarget = new MoveTarget(liftMotor1, -300);
-                moveTargets.add(currentTarget);
-                sus = false;
-                timpCon.reset();
-            }
-        }
         boolean left_bumper1_pressed = gamepad1.left_bumper;
         if (left_bumper1_pressed && !lastPressedCatch) {
             if (catcher.getPosition() == 0) {
-                timpCon.reset();
                 catcher.setPosition(.6f);
-                if(conuri){
-                    sus = true;
-                    conuri = false;
-                }
             } else {
                 catcher.setPosition(0);
                 resetTargets();
@@ -216,17 +202,17 @@ public class teleop2 extends LinearOpMode {
     private void controlArm() {
         executeCurrentMoveTarget();
         MoveTarget currentTarget;
-        if(gamepad2.start) {
+        if(gamepad2.right_trigger!=0) {
             resetTargets();
-            conuri = true;
+            down = false;
             currentTarget = new MoveTarget(plateMotor, 0);
             moveTargets.add(currentTarget);
             currentTarget = new MoveTarget(liftMotor1, -148);
             moveTargets.add(currentTarget);
         }
-        else if(gamepad2.back) {
+        else if(gamepad2.left_trigger!=0) {
             resetTargets();
-            conuri = true;
+            down = false;
             currentTarget = new MoveTarget(plateMotor, 0);
             moveTargets.add(currentTarget);
             currentTarget = new MoveTarget(liftMotor1, -89);
@@ -234,24 +220,28 @@ public class teleop2 extends LinearOpMode {
         }
         else if (gamepad2.a) {
             resetTargets();
+            down = false;
             currentTarget = new MoveTarget(plateMotor, 0);
             moveTargets.add(currentTarget);
             currentTarget = new MoveTarget(liftMotor1, 0);
             moveTargets.add(currentTarget);
         } else if (gamepad2.dpad_left) {
             resetTargets();
+            down = false;
             currentTarget = new MoveTarget(liftMotor1, -820);
             moveTargets.add(currentTarget);
             currentTarget = new MoveTarget(plateMotor, -1000);
             moveTargets.add(currentTarget);
         } else if (gamepad2.dpad_right) {
             resetTargets();
+            down = false;
             currentTarget = new MoveTarget(liftMotor1, -500);
             moveTargets.add(currentTarget);
             currentTarget = new MoveTarget(plateMotor, -1000);
             moveTargets.add(currentTarget);
         } else if (gamepad2.dpad_up) {
             resetTargets();
+            down = false;
             currentTarget = new MoveTarget(liftMotor1, -1170);
             moveTargets.add(currentTarget);
             currentTarget = new MoveTarget(plateMotor, -1000);
@@ -265,24 +255,28 @@ public class teleop2 extends LinearOpMode {
             moveTargets.add(currentTarget);
         } else if (gamepad2.x) {
             resetTargets();
+            down = false;
             currentTarget = new MoveTarget(liftMotor1, -820);
             moveTargets.add(currentTarget);
             currentTarget = new MoveTarget(plateMotor, 1000);
             moveTargets.add(currentTarget);
         } else if (gamepad2.dpad_down) {
             resetTargets();
+            down = false;
             currentTarget = new MoveTarget(plateMotor, 0);
             moveTargets.add(currentTarget);
             currentTarget = new MoveTarget(liftMotor1, 0);
             moveTargets.add(currentTarget);
         } else if (gamepad2.b) {
             resetTargets();
+            down = false;
             currentTarget = new MoveTarget(liftMotor1, -500);
             moveTargets.add(currentTarget);
             currentTarget = new MoveTarget(plateMotor, 1000);
             moveTargets.add(currentTarget);
         } else if (gamepad2.y) {
             resetTargets();
+            down = false;
             currentTarget = new MoveTarget(liftMotor1, -1170);
             moveTargets.add(currentTarget);
             currentTarget = new MoveTarget(plateMotor, 1000);
@@ -301,7 +295,8 @@ public class teleop2 extends LinearOpMode {
             if (moveTargets.isEmpty() && runtime.milliseconds() > 1000) {
                 plateMotor.setPower(0);
             }
-            if ((liftMotor2.getCurrentPosition() >= -350 || liftMotor1.getCurrentPosition() >= -350) && moveTargets.isEmpty() && runtime.milliseconds() > 1000) {
+            if ((liftMotor2.getCurrentPosition() >= -350 || liftMotor1.getCurrentPosition() >= -350)
+                    && moveTargets.isEmpty() && runtime.milliseconds() > 1000) {
                     liftMotor1.setPower(0);
                     liftMotor2.setPower(0);
             } else if ((liftMotor2.getCurrentPosition() >= -800 || liftMotor1.getCurrentPosition() >= -800) && moveTargets.isEmpty() && runtime.milliseconds() > 1000) {
