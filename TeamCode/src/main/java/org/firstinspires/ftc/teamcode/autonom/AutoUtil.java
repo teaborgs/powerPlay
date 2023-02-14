@@ -28,8 +28,8 @@ public class AutoUtil {
             liftMotor2.setTargetPosition(-1170);
         }
         else if(pos == AutoPosition.MID) {
-            liftMotor1.setTargetPosition(-815);
-            liftMotor2.setTargetPosition(-815);
+            liftMotor1.setTargetPosition(-830);
+            liftMotor2.setTargetPosition(-830);
         }
         else if(pos == AutoPosition.LOW) {
             liftMotor1.setTargetPosition(-500);
