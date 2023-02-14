@@ -87,6 +87,7 @@ public class JunioriTeleOp extends LinearOpMode {
                             input.getY(),
                             -(gamepad1.right_trigger-gamepad1.left_trigger)*suppress1
                     )
+
             );
         }
     }
