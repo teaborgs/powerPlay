@@ -22,6 +22,9 @@ public class TraiectoriiStangaMid {
     public void initializeTrajectories(){
         deliverPreload = auto.mecanumDrive
                 .trajectorySequenceBuilder(new Pose2d())
+                .setConstraints
+                        (SampleMecanumDrive.getVelocityConstraint(40,MAX_ANG_VEL,TRACK_WIDTH)
+                                ,SampleMecanumDrive.getAccelerationConstraint(40))
                 .strafeRight(53.4)
                 .back(5)
                 .addTemporalMarker(0, () -> AutoUtil.liftPosition(auto.liftMotor1, auto.liftMotor2, AutoPosition.MID))

@@ -50,7 +50,7 @@ public class AutonomStangaHigh extends LinearOpMode {
     public AprilTagDetection tagOfInterest = null;
 
     public SampleMecanumDrive mecanumDrive;
-    public Servo catcher;
+    public Servo catcher,adjuster;
     public DcMotorEx liftMotor1, liftMotor2, plateMotor;
     public AutoUtil AutoUtil = new AutoUtil();
     public RevColorSensorV3 sensor;
@@ -61,6 +61,7 @@ public class AutonomStangaHigh extends LinearOpMode {
         liftMotor2 = hardwareMap.get(DcMotorEx.class, "liftMotor2");
         plateMotor = hardwareMap.get(DcMotorEx.class, "plateMotor");
         catcher = hardwareMap.get(Servo.class, "catcherServo");
+        adjuster = hardwareMap.get(Servo.class, "adjustServo");
         sensor = hardwareMap.get(RevColorSensorV3.class, "sensor");
         liftMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         liftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -89,6 +90,7 @@ public class AutonomStangaHigh extends LinearOpMode {
         telemetry.setMsTransmissionInterval(50);
 
         initialize();
+        new TraiectoriiStangaHigh(this).initializeTrajectories();
         while (!isStarted() && !isStopRequested()) {
             detectie();
             if(tagOfInterest != null)
@@ -128,5 +130,6 @@ public class AutonomStangaHigh extends LinearOpMode {
         mecanumDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         mecanumDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         AutoUtil.setClaw(catcher,false);
+        adjuster.setPosition(0f);
     }
 }
