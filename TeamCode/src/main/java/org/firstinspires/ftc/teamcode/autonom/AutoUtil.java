@@ -31,6 +31,10 @@ public class AutoUtil {
             liftMotor1.setTargetPosition(-1115);
             liftMotor2.setTargetPosition(-1115); //1100
         }
+        else if(pos == AutoPosition.HIGHaf) {
+            liftMotor1.setTargetPosition(-1120);
+            liftMotor2.setTargetPosition(-1120); //1100
+        }
         else if(pos == AutoPosition.MID) {
             liftMotor1.setTargetPosition(-820);
             liftMotor2.setTargetPosition(-820);

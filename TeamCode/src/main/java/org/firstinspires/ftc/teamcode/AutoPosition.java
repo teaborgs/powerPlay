@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 public enum AutoPosition {
     HIGH,
     HIGHother,
+    HIGHaf,
     MIDother,
     MID,
     LOW,

@@ -113,7 +113,7 @@ public class TraiectoriiStangaMid {
         park1 = auto.mecanumDrive
                 .trajectorySequenceBuilder(new Pose2d())
                 .forward(32)
-                .addTemporalMarker(.1, () -> AutoUtil.platePosition(auto.plateMotor,-2423))
+                .addTemporalMarker(.1, () -> AutoUtil.platePosition(auto.plateMotor,-1745))
                 .turn(Math.toRadians(90))
                 .addTemporalMarker(1.9, () -> AutoUtil.platePosition(auto.plateMotor,-1045))
                 .addTemporalMarker(2.5, () -> AutoUtil.liftPosition(auto.liftMotor1, auto.liftMotor2, AutoPosition.ZERO))
