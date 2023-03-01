@@ -52,8 +52,8 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(5, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(6.5, 0, 0);  //// kp 4.5
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(3.3, 0, 0); //// kp 5
 
     public static double LATERAL_MULTIPLIER = 1.143;
 
