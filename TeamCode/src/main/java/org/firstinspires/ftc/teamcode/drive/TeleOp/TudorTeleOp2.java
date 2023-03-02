@@ -19,7 +19,7 @@ public class TudorTeleOp2 extends LinearOpMode {
     SampleMecanumDrive mecanumDrive;
     RevColorSensorV3 sensor;
     DcMotorEx liftMotor1, liftMotor2, plateMotor;
-    Servo catcher;
+    Servo catcher, adjuster;
     double suppress1;
     int cp1 = 0, pp = 0, cp2 = 0;
     double suppressRotate;
@@ -39,6 +39,7 @@ public class TudorTeleOp2 extends LinearOpMode {
         plateMotor = hardwareMap.get(DcMotorEx.class, "plateMotor");
         catcher = hardwareMap.get(Servo.class, "catcherServo");
         sensor = hardwareMap.get(RevColorSensorV3.class, "sensor");
+        adjuster = hardwareMap.get(Servo.class, "adjustServo");
         catcher.setPosition(0);
         liftMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -274,18 +275,21 @@ public class TudorTeleOp2 extends LinearOpMode {
 
     private void autonomousArm() {
         if(gamepad2.back) {
-            pp = 1423;
-            plateMotor.setTargetPosition(1423);
+            pp = 1045;
+            plateMotor.setTargetPosition(1045);
             plateMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         }
         else if(gamepad2.start)
         {
-            pp = -1423;
-            plateMotor.setTargetPosition(-1423);
+            pp = -1045;
+            plateMotor.setTargetPosition(-1045);
             plateMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         }
     }
-
+    void testAdjuster() {
+        if(gamepad1.y) adjuster.setPosition(adjuster.getPosition() + 0.1);
+        else if(gamepad1.b) adjuster.setPosition(adjuster.getPosition() - 0.1);
+    }
     private void run() {
         resetArmLocalization();
         suppressWheels();
@@ -294,6 +298,7 @@ public class TudorTeleOp2 extends LinearOpMode {
         controlWheels();
         setLiftLevel();
         controlArm();
+        testAdjuster();
         controlCatcher();
         debugTelemetry();
         autonomousArm();
@@ -304,6 +309,7 @@ public class TudorTeleOp2 extends LinearOpMode {
         telemetry.addData("lift2", liftMotor2.getCurrentPosition());
         telemetry.addData("plate", plateMotor.getCurrentPosition());
         telemetry.addData("claw", catcher.getPosition());
+        telemetry.addData("adjuster", adjuster.getPosition());
         telemetry.addData("motorPower1", liftMotor1.getPower());
         telemetry.addData("motorBusy1", liftMotor1.isBusy());
         telemetry.addData("motorPower2", liftMotor2.getPower());

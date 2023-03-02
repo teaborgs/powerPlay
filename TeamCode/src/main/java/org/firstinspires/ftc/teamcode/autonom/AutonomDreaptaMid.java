@@ -47,7 +47,7 @@ public class AutonomDreaptaMid extends LinearOpMode {
     public AprilTagDetection tagOfInterest = null;
 
     public SampleMecanumDrive mecanumDrive;
-    public Servo catcher;
+    public Servo catcher, adjuster;
     public DcMotorEx liftMotor1, liftMotor2, plateMotor;
     public AutoUtil AutoUtil = new AutoUtil();
     int detected = 3;
@@ -57,6 +57,7 @@ public class AutonomDreaptaMid extends LinearOpMode {
         liftMotor2 = hardwareMap.get(DcMotorEx.class, "liftMotor2");
         plateMotor = hardwareMap.get(DcMotorEx.class, "plateMotor");
         catcher = hardwareMap.get(Servo.class, "catcherServo");
+        adjuster = hardwareMap.get(Servo.class, "adjustServo");
         liftMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         liftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         plateMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -84,6 +85,7 @@ public class AutonomDreaptaMid extends LinearOpMode {
         telemetry.setMsTransmissionInterval(50);
 
         initialize();
+        new TraiectoriiDreaptaMid(this).initializeTrajectories();
         while (!isStarted() && !isStopRequested()) {
             detectie();
             if(tagOfInterest != null)
@@ -123,5 +125,6 @@ public class AutonomDreaptaMid extends LinearOpMode {
         mecanumDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         mecanumDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         AutoUtil.setClaw(catcher,false);
+        adjuster.setPosition(0f);
     }
 }

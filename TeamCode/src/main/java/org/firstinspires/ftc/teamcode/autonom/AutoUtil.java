@@ -24,16 +24,28 @@ public class AutoUtil {
     }
     public static void liftPosition(DcMotorEx liftMotor1, DcMotorEx liftMotor2, AutoPosition pos) {
         if(pos == AutoPosition.HIGH) {
-            liftMotor1.setTargetPosition(-1170);
-            liftMotor2.setTargetPosition(-1170);
+            liftMotor1.setTargetPosition(-1145);
+            liftMotor2.setTargetPosition(-1145);
+        }
+        else if(pos == AutoPosition.HIGHother) {
+            liftMotor1.setTargetPosition(-1115);
+            liftMotor2.setTargetPosition(-1115); //1100
+        }
+        else if(pos == AutoPosition.HIGHaf) {
+            liftMotor1.setTargetPosition(-1120);
+            liftMotor2.setTargetPosition(-1120); //1100
         }
         else if(pos == AutoPosition.MID) {
-            liftMotor1.setTargetPosition(-830);
-            liftMotor2.setTargetPosition(-830);
+            liftMotor1.setTargetPosition(-820);
+            liftMotor2.setTargetPosition(-820);
+        }
+        else if(pos == AutoPosition.MIDother) {
+            liftMotor1.setTargetPosition(-805);
+            liftMotor2.setTargetPosition(-805);
         }
         else if(pos == AutoPosition.LOW) {
-            liftMotor1.setTargetPosition(-500);
-            liftMotor2.setTargetPosition(-490);
+            liftMotor1.setTargetPosition(-480);
+            liftMotor2.setTargetPosition(-480);
         }
         else if(pos == AutoPosition.ZERO) {
             liftMotor1.setTargetPosition(0);
