@@ -93,7 +93,7 @@ public class TraiectoriiStangaMid {
                 .setConstraints
                         (SampleMecanumDrive.getVelocityConstraint(35,MAX_ANG_VEL,TRACK_WIDTH)
                                 ,SampleMecanumDrive.getAccelerationConstraint(35))
-                .forward(25.9)
+                .forward(26.4)
                 .addTemporalMarker( .1, () -> AutoUtil.platePosition(auto.plateMotor,-1045))
                 .addTemporalMarker(.35, () -> AutoUtil.liftPosition(auto.liftMotor1, auto.liftMotor2, AutoPosition.CONE2))
                 .build();
@@ -154,7 +154,7 @@ public class TraiectoriiStangaMid {
                 .forward(34)
                 .addTemporalMarker(.1, () -> AutoUtil.platePosition(auto.plateMotor,-1745))
                 .turn(Math.toRadians(90))
-                .addTemporalMarker(1.9, () -> AutoUtil.platePosition(auto.plateMotor,-1045))
+                .addTemporalMarker(2.4, () -> AutoUtil.platePosition(auto.plateMotor,-1045))
                 .addTemporalMarker(2.5, () -> AutoUtil.liftPosition(auto.liftMotor1, auto.liftMotor2, AutoPosition.ZERO))
                 /// .addTemporalMarker(2, () -> AutoUtil.liftPosition(auto.liftMotor1, auto.liftMotor2, AutoPosition.ZERO))
                 .build();
