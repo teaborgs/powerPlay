@@ -25,7 +25,7 @@ public class TraiectoriiDreaptaMid {
                 .setConstraints
                         (SampleMecanumDrive.getVelocityConstraint(40,MAX_ANG_VEL,TRACK_WIDTH)
                                 ,SampleMecanumDrive.getAccelerationConstraint(40))
-                .strafeLeft(53.5)
+                .strafeLeft(54.5)
                 .back(6.2)
                 .addTemporalMarker(0, () -> AutoUtil.liftPosition(auto.liftMotor1, auto.liftMotor2, AutoPosition.MID))
                 .addTemporalMarker(.5, () -> AutoUtil.platePosition(auto.plateMotor,2080))
@@ -33,13 +33,13 @@ public class TraiectoriiDreaptaMid {
                 .build();
         catchCone1 = auto.mecanumDrive
                 .trajectorySequenceBuilder(new Pose2d())
-                .forward(23.6)
+                .forward(23.9)
                 .addTemporalMarker(0, () -> AutoUtil.platePosition(auto.plateMotor,1045))
                 .addTemporalMarker(.35, () -> AutoUtil.liftPosition(auto.liftMotor1, auto.liftMotor2, AutoPosition.CONE5))
                 .build();
         deliverCone1 = auto.mecanumDrive
                 .trajectorySequenceBuilder(new Pose2d())
-                .back(23.5)
+                .back(23.8)
                 .addTemporalMarker(0, () -> AutoUtil.liftPosition(auto.liftMotor1, auto.liftMotor2, AutoPosition.MIDother))
                 .addTemporalMarker(.5, () -> AutoUtil.platePosition(auto.plateMotor,2080))
                 .addTemporalMarker(.5, () -> auto.adjuster.setPosition(0.8))
@@ -112,7 +112,7 @@ public class TraiectoriiDreaptaMid {
                 .build();
         park1 = auto.mecanumDrive
                 .trajectorySequenceBuilder(new Pose2d())
-                .forward(31.6)
+                .forward(28)
                 .turn(Math.toRadians(-80))
                 .addTemporalMarker(.3, () -> AutoUtil.platePosition(auto.plateMotor,1745))
                 .addTemporalMarker(2, () -> AutoUtil.platePosition(auto.plateMotor,1045))

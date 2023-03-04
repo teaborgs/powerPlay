@@ -35,13 +35,17 @@ public class AutoUtil {
             liftMotor1.setTargetPosition(-1120);
             liftMotor2.setTargetPosition(-1120); //1100
         }
+        else if(pos == AutoPosition.ZEROsub) {
+            liftMotor1.setTargetPosition(-15);
+            liftMotor2.setTargetPosition(-15);
+        }
         else if(pos == AutoPosition.MID) {
             liftMotor1.setTargetPosition(-820);
             liftMotor2.setTargetPosition(-820);
         }
         else if(pos == AutoPosition.MIDother) {
-            liftMotor1.setTargetPosition(-805);
-            liftMotor2.setTargetPosition(-805);
+            liftMotor1.setTargetPosition(-815);
+            liftMotor2.setTargetPosition(-815);
         }
         else if(pos == AutoPosition.LOW) {
             liftMotor1.setTargetPosition(-480);
@@ -52,20 +56,20 @@ public class AutoUtil {
             liftMotor2.setTargetPosition(0);
         }
         else if(pos == AutoPosition.CONE5) {
-            liftMotor1.setTargetPosition(-196);
-            liftMotor2.setTargetPosition(-192);
+            liftMotor1.setTargetPosition(-200);
+            liftMotor2.setTargetPosition(-196);
         }
         else if(pos == AutoPosition.CONE4) {
-            liftMotor1.setTargetPosition(-144);
-            liftMotor2.setTargetPosition(-148);
+            liftMotor1.setTargetPosition(-164);
+            liftMotor2.setTargetPosition(-168);
         }
         else if(pos == AutoPosition.CONE3) {
-            liftMotor1.setTargetPosition(-89);
-            liftMotor2.setTargetPosition(-100);
+            liftMotor1.setTargetPosition(-114);
+            liftMotor2.setTargetPosition(-125);
         }
         else if(pos == AutoPosition.CONE2) {
-            liftMotor1.setTargetPosition(-52);
-            liftMotor2.setTargetPosition(-54);
+            liftMotor1.setTargetPosition(-72);
+            liftMotor2.setTargetPosition(-74);
         }
 
         liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);

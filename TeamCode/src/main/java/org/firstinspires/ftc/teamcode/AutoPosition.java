@@ -4,6 +4,7 @@ public enum AutoPosition {
     HIGH,
     HIGHother,
     HIGHaf,
+    ZEROsub,
     MIDother,
     MID,
     LOW,
