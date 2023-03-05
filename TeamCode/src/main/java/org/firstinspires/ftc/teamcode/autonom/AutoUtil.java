@@ -74,8 +74,8 @@ public class AutoUtil {
 
         liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        liftMotor1.setPower(1f);
-        liftMotor2.setPower(1f);
+        liftMotor1.setPower(0.6f);
+        liftMotor2.setPower(0.6f);
     }
     public static void relaxMotor(DcMotorEx liftMotor1, DcMotorEx liftMotor2) {
         liftMotor1.setPower(0f);
