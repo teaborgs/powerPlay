@@ -130,7 +130,6 @@ public class teleop2 extends LinearOpMode {
         debugTelemetry();
         //autonomousArm();
         relax();
-        ///colorDetect();
     }
 
     private void debugTelemetry() {
