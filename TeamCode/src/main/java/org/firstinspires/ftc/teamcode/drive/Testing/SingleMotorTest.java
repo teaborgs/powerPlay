@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 @TeleOp(group = "Testing")
 public class SingleMotorTest extends LinearOpMode
 {
-
     DcMotorEx motor;
 
     @Override
@@ -26,20 +25,12 @@ public class SingleMotorTest extends LinearOpMode
 
     private void Init()
     {
-        motor = hardwareMap.get(DcMotorEx.class, "leftFront"); // slot 0
+        motor = hardwareMap.get(DcMotorEx.class, "slot0");
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
     private void RunLoop()
     {
         motor.setPower(gamepad1.right_stick_y);
-    }
-
-
-
-    private double DriveFn(double x)
-    {
-        double sign = x / Math.abs(x);
-        return (x * x * sign);
     }
 }
