@@ -89,34 +89,6 @@ public class soloOp extends LinearOpMode {
                 )
         );
     }
-
-    private void controlWheels1() {
-        float x,y;
-        if(gamepad2.right_stick_x!=0)
-            x=gamepad2.right_stick_x;
-        else if(gamepad2.left_stick_x!=0)
-            x=gamepad2.left_stick_x;
-        else
-            x=0;
-        if(gamepad2.right_stick_y!=0)
-            y=gamepad2.right_stick_y;
-        else if(gamepad2.left_stick_y!=0)
-            y=gamepad2.left_stick_y;
-        else
-            y=0;
-        Pose2d poseEstimate = mecanumDrive.getPoseEstimate();
-        Vector2d input = new Vector2d(
-                -y * suppress1,
-                -x * suppress1
-        ).rotated(-poseEstimate.getHeading());
-        mecanumDrive.setWeightedDrivePower(
-                new Pose2d(
-                        input.getX(),
-                        input.getY(),
-                        -(gamepad2.right_trigger - gamepad12left_trigger) * suppressRotate
-                )
-        );
-    }
     boolean standing = true;
 
     private void resetArmLocalization() {
@@ -148,25 +120,6 @@ public class soloOp extends LinearOpMode {
         }
         lastPressedCatch = left_bumper1_pressed;
     }
-    private void controlCatcher1() {
-        executeCurrentMoveTarget();
-        MoveTarget currentTarget;
-        boolean left_bumper1_pressed = gamepad2.right_bumper;
-        if (left_bumper1_pressed && !lastPressedCatch) {
-            if (catcher.getPosition() == 0) {
-                catcher.setPosition(.6f);
-            } else {
-                catcher.setPosition(0);
-                resetTargets();
-                if (down) {
-                    currentTarget = new MoveTarget(liftMotor1, -300);
-                    moveTargets.add(currentTarget);
-                    down = false;
-                }
-            }
-        }
-        lastPressedCatch = left_bumper1_pressed;
-    }
 
 
     private void suppressWheels() {
@@ -178,25 +131,17 @@ public class soloOp extends LinearOpMode {
             suppressRotate = 1f;
         }
     }
-    private void suppressWheels1() {
-        if (gamepad2.left_bumper) {
-            suppress1 = 0.5f;
-            suppressRotate = 0.5f;
-        } else {
-            suppress1 = 1f;
-            suppressRotate = 1f;
-        }
-    }
+ 
 
     private void run() {
         resetArmLocalization();
         suppressWheels();
-        suppressWheels1();
+
         controlWheels();
-        controlWheels1();
+
         controlArm();
         controlCatcher();
-        controlCatcher1();
+
         debugTelemetry();
         //autonomousArm();
         relax();
