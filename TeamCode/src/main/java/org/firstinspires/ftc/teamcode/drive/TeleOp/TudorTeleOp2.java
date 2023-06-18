@@ -2,24 +2,20 @@ package org.firstinspires.ftc.teamcode.drive.TeleOp;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @TeleOp(group = "Driving")
 public class TudorTeleOp2 extends LinearOpMode {
 
     SampleMecanumDrive mecanumDrive;
-    RevColorSensorV3 sensor;
-    DcMotorEx liftMotor1, liftMotor2, plateMotor;
-    Servo catcher, adjuster;
+    DcMotorEx liftMotor1, liftMotor2, wormMotor;
+    Servo catcher;
     double suppress1;
     int cp1 = 0, pp = 0, cp2 = 0;
     double suppressRotate;
@@ -36,18 +32,16 @@ public class TudorTeleOp2 extends LinearOpMode {
     private void initialization() {
         liftMotor1 = hardwareMap.get(DcMotorEx.class, "liftMotor1");
         liftMotor2 = hardwareMap.get(DcMotorEx.class, "liftMotor2");
-        plateMotor = hardwareMap.get(DcMotorEx.class, "plateMotor");
+        wormMotor = hardwareMap.get(DcMotorEx.class, "plateMotor");
         catcher = hardwareMap.get(Servo.class, "catcherServo");
-        sensor = hardwareMap.get(RevColorSensorV3.class, "sensor");
-        adjuster = hardwareMap.get(Servo.class, "adjustServo");
         catcher.setPosition(0);
         liftMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        plateMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        plateMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        plateMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        wormMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wormMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wormMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         liftMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         liftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
@@ -125,16 +119,16 @@ public class TudorTeleOp2 extends LinearOpMode {
             }
         }
         if (gamepad2.right_trigger != 0 || gamepad2.left_trigger != 0) {
-            plateMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            pp = plateMotor.getCurrentPosition();
-            plateMotor.setPower(1f * (gamepad2.right_trigger - gamepad2.left_trigger));
+            wormMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            pp = wormMotor.getCurrentPosition();
+            wormMotor.setPower(1f * (gamepad2.right_trigger - gamepad2.left_trigger));
         } else {
-            plateMotor.setTargetPosition(pp);
-            plateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            if(plateMotor.isBusy())
-                plateMotor.setPower(1f);
+            wormMotor.setTargetPosition(pp);
+            wormMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            if(wormMotor.isBusy())
+                wormMotor.setPower(1f);
             else
-                plateMotor.setPower(0f);
+                wormMotor.setPower(0f);
         }
     }
 
@@ -154,20 +148,20 @@ public class TudorTeleOp2 extends LinearOpMode {
     private void setPlateLevel() {
         if (gamepad2.right_bumper) {
             pp = -1000;
-            plateMotor.setTargetPosition(-1000);
+            wormMotor.setTargetPosition(-1000);
         } else if (gamepad2.left_bumper) {
             pp = 1000;
-            plateMotor.setTargetPosition(1000);
+            wormMotor.setTargetPosition(1000);
         } else if (gamepad2.dpad_up) {
             pp = 0;
-            plateMotor.setTargetPosition(0);
+            wormMotor.setTargetPosition(0);
         }
         if(gamepad2.right_bumper || gamepad2.left_bumper || gamepad2.dpad_up)
-            plateMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            wormMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
     }
     private void liftLevel() {
         pp = 0;
-        plateMotor.setTargetPosition(0);
+        wormMotor.setTargetPosition(0);
         cp1 = 0;
         liftMotor1.setTargetPosition(cp1);
         liftMotor1.setPower(1f);
@@ -175,12 +169,12 @@ public class TudorTeleOp2 extends LinearOpMode {
         liftMotor2.setTargetPosition(cp2);
         liftMotor2.setPower(1f);
         pp = 0;
-        plateMotor.setTargetPosition(0);
+        wormMotor.setTargetPosition(0);
     }
     private void setLiftLevel() {
         if (gamepad2.a) {
             pp = 0;
-            plateMotor.setTargetPosition(0);
+            wormMotor.setTargetPosition(0);
             cp1 = 0;
             liftMotor1.setTargetPosition(cp1);
             liftMotor1.setPower(1f);
@@ -188,7 +182,7 @@ public class TudorTeleOp2 extends LinearOpMode {
             liftMotor2.setTargetPosition(cp2);
             liftMotor2.setPower(1f);
             pp = 0;
-            plateMotor.setTargetPosition(0);
+            wormMotor.setTargetPosition(0);
         } else if (gamepad2.b) {
             cp1 = -507;
             liftMotor1.setTargetPosition(cp1);
@@ -197,7 +191,7 @@ public class TudorTeleOp2 extends LinearOpMode {
             liftMotor2.setTargetPosition(cp2);
             liftMotor2.setPower(1f);
             pp = -1000;
-            plateMotor.setTargetPosition(-1000);
+            wormMotor.setTargetPosition(-1000);
         } else if (gamepad2.x) {
             cp1 = -806;
             liftMotor1.setTargetPosition(cp1);
@@ -206,7 +200,7 @@ public class TudorTeleOp2 extends LinearOpMode {
             liftMotor2.setTargetPosition(cp2);
             liftMotor2.setPower(1f);
             pp = -1000;
-            plateMotor.setTargetPosition(-1000);
+            wormMotor.setTargetPosition(-1000);
         } else if (gamepad2.y) {
             cp1 = -1174;
             liftMotor1.setTargetPosition(cp1);
@@ -215,7 +209,7 @@ public class TudorTeleOp2 extends LinearOpMode {
             liftMotor2.setTargetPosition(cp2);
             liftMotor2.setPower(1f);
             pp = -1000;
-            plateMotor.setTargetPosition(-1000);
+            wormMotor.setTargetPosition(-1000);
         } else if (gamepad2.dpad_up) {
             cp1 = -1174;
             liftMotor1.setTargetPosition(cp1);
@@ -224,7 +218,7 @@ public class TudorTeleOp2 extends LinearOpMode {
             liftMotor2.setTargetPosition(cp2);
             liftMotor2.setPower(1f);
             pp = 1000;
-            plateMotor.setTargetPosition(1000);
+            wormMotor.setTargetPosition(1000);
         } else if(gamepad2.dpad_left) {
             cp1 = -806;
             liftMotor1.setTargetPosition(cp1);
@@ -233,7 +227,7 @@ public class TudorTeleOp2 extends LinearOpMode {
             liftMotor2.setTargetPosition(cp2);
             liftMotor2.setPower(1f);
             pp = 1000;
-            plateMotor.setTargetPosition(1000);
+            wormMotor.setTargetPosition(1000);
         }
         else if(gamepad2.dpad_right) {
             cp1 = -507;
@@ -243,11 +237,11 @@ public class TudorTeleOp2 extends LinearOpMode {
             liftMotor2.setTargetPosition(cp2);
             liftMotor2.setPower(1f);
             pp = 1000;
-            plateMotor.setTargetPosition(1000);
+            wormMotor.setTargetPosition(1000);
         }
         else if(gamepad2.dpad_down) {
             pp = 0;
-            plateMotor.setTargetPosition(0);
+            wormMotor.setTargetPosition(0);
             cp1 = 0;
             liftMotor1.setTargetPosition(cp1);
             liftMotor1.setPower(1f);
@@ -255,11 +249,11 @@ public class TudorTeleOp2 extends LinearOpMode {
             liftMotor2.setTargetPosition(cp2);
             liftMotor2.setPower(1f);
             pp = 0;
-            plateMotor.setTargetPosition(0);
+            wormMotor.setTargetPosition(0);
         }
         if (gamepad2.a || gamepad2.b || gamepad2.x || gamepad2.y || gamepad2.dpad_down || gamepad2.dpad_up || gamepad2.dpad_left || gamepad2.dpad_right) {
             liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            plateMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            wormMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         }
     }
 
@@ -276,20 +270,17 @@ public class TudorTeleOp2 extends LinearOpMode {
     private void autonomousArm() {
         if(gamepad2.back) {
             pp = 1045;
-            plateMotor.setTargetPosition(1045);
-            plateMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            wormMotor.setTargetPosition(1045);
+            wormMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         }
         else if(gamepad2.start)
         {
             pp = -1045;
-            plateMotor.setTargetPosition(-1045);
-            plateMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            wormMotor.setTargetPosition(-1045);
+            wormMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         }
     }
-    void testAdjuster() {
-        if(gamepad1.y) adjuster.setPosition(adjuster.getPosition() + 0.1);
-        else if(gamepad1.b) adjuster.setPosition(adjuster.getPosition() - 0.1);
-    }
+
     private void run() {
         resetArmLocalization();
         suppressWheels();
@@ -298,7 +289,6 @@ public class TudorTeleOp2 extends LinearOpMode {
         controlWheels();
         setLiftLevel();
         controlArm();
-        testAdjuster();
         controlCatcher();
         debugTelemetry();
         autonomousArm();
@@ -307,21 +297,16 @@ public class TudorTeleOp2 extends LinearOpMode {
     private void debugTelemetry() {
         telemetry.addData("lift1", liftMotor1.getCurrentPosition());
         telemetry.addData("lift2", liftMotor2.getCurrentPosition());
-        telemetry.addData("plate", plateMotor.getCurrentPosition());
+        telemetry.addData("plate", wormMotor.getCurrentPosition());
         telemetry.addData("claw", catcher.getPosition());
-        telemetry.addData("adjuster", adjuster.getPosition());
         telemetry.addData("motorPower1", liftMotor1.getPower());
         telemetry.addData("motorBusy1", liftMotor1.isBusy());
         telemetry.addData("motorPower2", liftMotor2.getPower());
         telemetry.addData("motorBusy2", liftMotor2.isBusy());
-        telemetry.addData("plateBusy1", plateMotor.isBusy());
-        telemetry.addData("platePower", plateMotor.getPower());
+        telemetry.addData("plateBusy1", wormMotor.isBusy());
+        telemetry.addData("platePower", wormMotor.getPower());
         telemetry.addData("X input", gamepad1.left_stick_x);
         telemetry.addData("Y input", gamepad1.left_stick_y);
-        telemetry.addLine("culori")
-                .addData("red", sensor.red())
-                .addData("green", sensor.green())
-                .addData("blue",sensor.blue());
         telemetry.update();
     }
 

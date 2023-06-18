@@ -21,7 +21,7 @@ public class teleop2 extends LinearOpMode {
 
     SampleMecanumDrive mecanumDrive;
     DcMotorEx liftMotor1, liftMotor2, plateMotor;
-    Servo catcher,adjuster;
+    Servo catcher;
     double suppress1;
     int pp = 0, cp1 = 0, cp2 = 0;
     double suppressRotate;
@@ -40,11 +40,9 @@ public class teleop2 extends LinearOpMode {
     private void initialization() {
         liftMotor1 = hardwareMap.get(DcMotorEx.class, "liftMotor1");
         liftMotor2 = hardwareMap.get(DcMotorEx.class, "liftMotor2");
-        plateMotor = hardwareMap.get(DcMotorEx.class, "plateMotor");
+        plateMotor = hardwareMap.get(DcMotorEx.class, "wormMotor");
         catcher = hardwareMap.get(Servo.class, "catcherServo");
-        adjuster = hardwareMap.get(Servo.class, "adjustServo");
         catcher.setPosition(0);
-        adjuster.setPosition(adjuster.getPosition());
         liftMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
