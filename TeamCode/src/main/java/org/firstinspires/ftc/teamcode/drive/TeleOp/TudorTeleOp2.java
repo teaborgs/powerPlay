@@ -32,7 +32,7 @@ public class TudorTeleOp2 extends LinearOpMode {
     private void initialization() {
         liftMotor1 = hardwareMap.get(DcMotorEx.class, "liftMotor1");
         liftMotor2 = hardwareMap.get(DcMotorEx.class, "liftMotor2");
-        wormMotor = hardwareMap.get(DcMotorEx.class, "plateMotor");
+        wormMotor = hardwareMap.get(DcMotorEx.class, "wormMotor");
         catcher = hardwareMap.get(Servo.class, "catcherServo");
         catcher.setPosition(0);
         liftMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -87,8 +87,8 @@ public class TudorTeleOp2 extends LinearOpMode {
                 liftMotor2.setPower(0f);
             }
             else {
-                liftMotor1.setPower(1f * gamepad2.left_stick_y);
-                liftMotor2.setPower(1f * gamepad2.left_stick_y);
+                liftMotor1.setPower(0.4f * gamepad2.left_stick_y);
+                liftMotor2.setPower(0.4f * gamepad2.left_stick_y);
             }
         } else   {
             liftMotor1.setTargetPosition(cp1);

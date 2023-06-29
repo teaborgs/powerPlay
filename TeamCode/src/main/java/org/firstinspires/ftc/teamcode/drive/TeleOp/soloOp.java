@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.drive.TeleOp;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,7 +9,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 import java.util.LinkedList;
@@ -20,7 +18,7 @@ import java.util.Queue;
 public class soloOp extends LinearOpMode {
 
     SampleMecanumDrive mecanumDrive;
-    DcMotorEx liftMotor1, liftMotor2, plateMotor;
+    DcMotorEx liftMotor1, liftMotor2, wormMotor;
     Servo catcher,adjuster;
     double suppress1;
     int pp = 0, cp1 = 0, cp2 = 0;
@@ -40,7 +38,7 @@ public class soloOp extends LinearOpMode {
     private void initialization() {
         liftMotor1 = hardwareMap.get(DcMotorEx.class, "liftMotor1");
         liftMotor2 = hardwareMap.get(DcMotorEx.class, "liftMotor2");
-        plateMotor = hardwareMap.get(DcMotorEx.class, "plateMotor");
+        wormMotor = hardwareMap.get(DcMotorEx.class, "wormMotor");
         catcher = hardwareMap.get(Servo.class, "catcherServo");
         adjuster = hardwareMap.get(Servo.class, "adjustServo");
         catcher.setPosition(0);
@@ -49,11 +47,11 @@ public class soloOp extends LinearOpMode {
         liftMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        plateMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        plateMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        plateMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        liftMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        liftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        wormMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wormMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wormMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        liftMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         mecanumDrive = new SampleMecanumDrive(hardwareMap);
         mecanumDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -63,15 +61,15 @@ public class soloOp extends LinearOpMode {
     }
 
     private void controlWheels() {
-        float x,y;
+        float x = 0,y = 0;
         if(gamepad1.right_stick_x!=0)
-            x=gamepad1.right_stick_x;
+         ;   //x=gamepad1.right_stick_x;
         else if(gamepad1.left_stick_x!=0)
             x=gamepad1.left_stick_x;
         else
             x=0;
         if(gamepad1.right_stick_y!=0)
-            y=gamepad1.right_stick_y;
+    ;   //     y=gamepad1.right_stick_y;
         else if(gamepad1.left_stick_y!=0)
             y=gamepad1.left_stick_y;
         else
@@ -150,14 +148,14 @@ public class soloOp extends LinearOpMode {
     private void debugTelemetry() {
         telemetry.addData("lift1", liftMotor1.getCurrentPosition());
         telemetry.addData("lift2", liftMotor2.getCurrentPosition());
-        telemetry.addData("plate", plateMotor.getCurrentPosition());
+        telemetry.addData("plate", wormMotor.getCurrentPosition());
         telemetry.addData("claw", catcher.getPosition());
         telemetry.addData("motorPower1", liftMotor1.getPower());
         telemetry.addData("motorBusy1", liftMotor1.isBusy());
         telemetry.addData("motorPower2", liftMotor2.getPower());
         telemetry.addData("motorBusy2", liftMotor2.isBusy());
-        telemetry.addData("plateBusy1", plateMotor.isBusy());
-        telemetry.addData("platePower", plateMotor.getPower());
+        telemetry.addData("plateBusy1", wormMotor.isBusy());
+        telemetry.addData("platePower", wormMotor.getPower());
         telemetry.addData("timpCon", timpCon.milliseconds());
         telemetry.addData("saut", gamepad1.left_stick_y);
         telemetry.addData("saut2", gamepad1.right_stick_y);
@@ -221,10 +219,15 @@ public class soloOp extends LinearOpMode {
         executeCurrentMoveTarget();
         MoveTarget currentTarget;
 
+
+        // temp
+        liftMotor1.setPower(gamepad1.right_stick_y);
+        liftMotor2.setPower(gamepad1.right_stick_y);
+
         if (gamepad1.a) {
             resetTargets();
             down = false;
-            currentTarget = new MoveTarget(plateMotor, 0);
+            currentTarget = new MoveTarget(wormMotor, 0);
             moveTargets.add(currentTarget);
             currentTarget = new MoveTarget(liftMotor1, 0);
             moveTargets.add(currentTarget);
@@ -233,40 +236,40 @@ public class soloOp extends LinearOpMode {
             down = false;
             currentTarget = new MoveTarget(liftMotor1, -820);
             moveTargets.add(currentTarget);
-            currentTarget = new MoveTarget(plateMotor, -725);
+            currentTarget = new MoveTarget(wormMotor, -725);
             moveTargets.add(currentTarget);
         } else if (gamepad1.dpad_right) {
             resetTargets();
             down = false;
             currentTarget = new MoveTarget(liftMotor1, -500);
             moveTargets.add(currentTarget);
-            currentTarget = new MoveTarget(plateMotor, -725);
+            currentTarget = new MoveTarget(wormMotor, -725);
             moveTargets.add(currentTarget);
         } else if (gamepad1.dpad_up) {
             resetTargets();
             down = false;
             currentTarget = new MoveTarget(liftMotor1, -1170);
             moveTargets.add(currentTarget);
-            currentTarget = new MoveTarget(plateMotor, -725);
+            currentTarget = new MoveTarget(wormMotor, -725);
             moveTargets.add(currentTarget);
         } else if (gamepad1.left_stick_button) {
             resetTargets();
             down = true;
             currentTarget = new MoveTarget(liftMotor1, -50);
             moveTargets.add(currentTarget);
-            currentTarget = new MoveTarget(plateMotor, -725);
+            currentTarget = new MoveTarget(wormMotor, -725);
             moveTargets.add(currentTarget);
         } else if (gamepad1.x) {
             resetTargets();
             down = false;
             currentTarget = new MoveTarget(liftMotor1, -820);
             moveTargets.add(currentTarget);
-            currentTarget = new MoveTarget(plateMotor, 725);
+            currentTarget = new MoveTarget(wormMotor, 725);
             moveTargets.add(currentTarget);
         } else if (gamepad1.dpad_down) {
             resetTargets();
             down = false;
-            currentTarget = new MoveTarget(plateMotor, 0);
+            currentTarget = new MoveTarget(wormMotor, 0);
             moveTargets.add(currentTarget);
             currentTarget = new MoveTarget(liftMotor1, 0);
             moveTargets.add(currentTarget);
@@ -275,28 +278,28 @@ public class soloOp extends LinearOpMode {
             down = false;
             currentTarget = new MoveTarget(liftMotor1, -500);
             moveTargets.add(currentTarget);
-            currentTarget = new MoveTarget(plateMotor, 725);
+            currentTarget = new MoveTarget(wormMotor, 725);
             moveTargets.add(currentTarget);
         } else if (gamepad1.y) {
             resetTargets();
             down = false;
             currentTarget = new MoveTarget(liftMotor1, -1170);
             moveTargets.add(currentTarget);
-            currentTarget = new MoveTarget(plateMotor, 725);
+            currentTarget = new MoveTarget(wormMotor, 725);
             moveTargets.add(currentTarget);
         } else if (gamepad1.right_stick_button) {
             resetTargets();
             down = true;
             currentTarget = new MoveTarget(liftMotor1, -50);
             moveTargets.add(currentTarget);
-            currentTarget = new MoveTarget(plateMotor, 725);
+            currentTarget = new MoveTarget(wormMotor, 725);
             moveTargets.add(currentTarget);
         }
     }
 
     private void relax() {
         if (moveTargets.isEmpty() && runtime.milliseconds() > 1000) {
-            plateMotor.setPower(0);
+            wormMotor.setPower(0);
         }
         if ((liftMotor2.getCurrentPosition() >= -350 || liftMotor1.getCurrentPosition() >= -350)
                 && moveTargets.isEmpty() && runtime.milliseconds() > 1000) {

@@ -100,7 +100,7 @@ public final class CustomPipeline extends OpenCvPipeline
 
 				if (pixel.g > 150 || pixel.g > pixel.r && pixel.g > pixel.b) // ignore too much green or green dominant
 				{
-					processed.put(i / _approximation, j / _approximation, 0, 0, 0, 255);
+					processed.put(i / _approximation, j / _approximation, 0, 255, 0, 255);
 					continue;
 				}
 
@@ -158,6 +158,8 @@ public final class CustomPipeline extends OpenCvPipeline
 
 	public void Pause() { _pauseDetection = true; }
 	public void Unpause() { _pauseDetection = false; }
+
+	public void ResetDetection() { _lastDetection.Reset(); }
 
 	private boolean IsGray(final Pixel pixel)
 	{
