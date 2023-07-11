@@ -180,7 +180,7 @@ public class IndustrialDemo extends LinearOpMode
 		RedSphereSequence();
 		sleep(1500);
 		RedCubeSequence();
-		sleep(1500);.
+		sleep(1500);
 		RedSphereSequence();
 		sleep(1500);
 		BluSphereSequence();
