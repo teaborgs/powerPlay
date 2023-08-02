@@ -21,110 +21,111 @@ import java.util.ArrayList;
 
 @Config
 @Autonomous(group = "autonom")
-public class AutonomStangaMid extends LinearOpMode {
+public class AutonomStangaMid extends LinearOpMode
+{
+	OpenCvCamera camera;
+	AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
-    OpenCvCamera camera;
-    AprilTagDetectionPipeline aprilTagDetectionPipeline;
+	static final double FEET_PER_METER = 3.28084;
+	int cameraMonitorViewId = 0;
+	// Lens intrinsics
+	// UNITS ARE PIXELS
+	// NOTE: this calibration is for the C920 webcam at 800x448.
+	// You will need to do your own calibration for other configurations!
+	double fx = 578.272;
+	double fy = 578.272;
+	double cx = 402.145;
+	double cy = 221.506;
 
-    static final double FEET_PER_METER = 3.28084;
-    int cameraMonitorViewId = 0;
-    // Lens intrinsics
-    // UNITS ARE PIXELS
-    // NOTE: this calibration is for the C920 webcam at 800x448.
-    // You will need to do your own calibration for other configurations!
-    double fx = 578.272;
-    double fy = 578.272;
-    double cx = 402.145;
-    double cy = 221.506;
+	// UNITS ARE METERS
+	double tagsize = 0.166;
 
-    // UNITS ARE METERS
-    double tagsize = 0.166;
+	int Left = 1;
+	int Middle = 2;
+	int Right = 3;
 
-    int Left = 1;
-    int Middle = 2;
-    int Right = 3;
+	public AprilTagDetection tagOfInterest = null;
 
-    public AprilTagDetection tagOfInterest = null;
+	public SampleMecanumDrive mecanumDrive;
+	public Servo catcher;
+	public DcMotorEx liftMotor1, liftMotor2, wormMotor;
+	int detected = 3;
+	boolean tagFound = false;
+	@Override
+	public void runOpMode() throws InterruptedException
+	{
+		liftMotor1 = hardwareMap.get(DcMotorEx.class, "liftMotor1");
+		liftMotor2 = hardwareMap.get(DcMotorEx.class, "liftMotor2");
+		wormMotor = hardwareMap.get(DcMotorEx.class, "wormMotor");
+		catcher = hardwareMap.get(Servo.class, "catcherServo");
+		liftMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+		liftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+		wormMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-    public SampleMecanumDrive mecanumDrive;
-    public Servo catcher, adjuster;
-    public DcMotorEx liftMotor1, liftMotor2, plateMotor;
-    public AutoUtil AutoUtil = new AutoUtil();
-    int detected = 3;
-    @Override
-    public void runOpMode() throws InterruptedException {
-        liftMotor1 = hardwareMap.get(DcMotorEx.class, "liftMotor1");
-        liftMotor2 = hardwareMap.get(DcMotorEx.class, "liftMotor2");
-        plateMotor = hardwareMap.get(DcMotorEx.class, "plateMotor");
-        catcher = hardwareMap.get(Servo.class, "catcherServo");
-        adjuster = hardwareMap.get(Servo.class, "adjustServo");
-        liftMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        liftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        plateMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+		cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+		camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+		aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
-        cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+		camera.setPipeline(aprilTagDetectionPipeline);
+		camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+		{
+			@Override
+			public void onOpened() { camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT); }
 
-        camera.setPipeline(aprilTagDetectionPipeline);
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
-            }
+			@Override
+			public void onError(int errorCode) {}
+		});
 
-            @Override
-            public void onError(int errorCode)
-            {
+		telemetry.setMsTransmissionInterval(50);
 
-            }
-        });
+		initialize();
+		new TraiectoriiStangaMid(this).initializeTrajectories();
+		while (!isStarted() && !isStopRequested() && !tagFound)
+		{
+			detectie();
+			if(tagOfInterest != null)
+				detected = tagOfInterest.id;
+			telemetry.addData("obiect", detected);
+			telemetry.update();
+		}
+		waitForStart();
+		while (opModeIsActive() && !isStopRequested())
+		{
+			new TraiectoriiStangaMid(this).runAuto(detected);
+			sleep(30000);
+		}
+	}
 
-        telemetry.setMsTransmissionInterval(50);
+	void detectie()
+	{
+		ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
-        initialize();
-        new TraiectoriiStangaMid(this).initializeTrajectories();
-        while (!isStarted() && !isStopRequested()) {
-            detectie();
-            if(tagOfInterest != null)
-                detected = tagOfInterest.id;
-            telemetry.addData("obiect", detected);
-            telemetry.update();
-        }
-        while (opModeIsActive() && !isStopRequested()) {
-            new TraiectoriiStangaMid(this).runAuto(detected);
-            sleep(30000);
-        }
-    }
-    void detectie() {
-        ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+		if(currentDetections.size() != 0)
+		{
+			for (AprilTagDetection tag : currentDetections)
+			{
+				if (tag.id == Left || tag.id == Middle || tag.id == Right)
+				{
+					tagOfInterest = tag;
+					tagFound = true;
+					break;
+				}
+			}
+		}
+	}
 
-        if(currentDetections.size() != 0) {
-            boolean tagFound = false;
-
-            for (AprilTagDetection tag : currentDetections) {
-                if (tag.id == Left || tag.id == Middle || tag.id == Right) {
-                    tagOfInterest = tag;
-                    tagFound = true;
-                    break;
-                }
-            }
-        }
-    }
-    private void initialize(){
-        liftMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        liftMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        liftMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        liftMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        plateMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        plateMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER); /// era fara encoder
-        mecanumDrive = new SampleMecanumDrive(hardwareMap);
-        mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
-        mecanumDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        mecanumDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        AutoUtil.setClaw(catcher,false);
-        adjuster.setPosition(1f);
-    }
+	private void initialize()
+	{
+		liftMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		liftMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+		liftMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		liftMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+		wormMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		wormMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER); /// era fara encoder
+		mecanumDrive = new SampleMecanumDrive(hardwareMap);
+		mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
+		mecanumDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		mecanumDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		AutoUtil.setClaw(catcher,false);
+	}
 }
