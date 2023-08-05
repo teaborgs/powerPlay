@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.autonom.OpenCV.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.autonom.Traiectorii.TraiectoriiStangaMid;
 import org.firstinspires.ftc.teamcode.autonom.Traiectorii.TraiectoriiStangaMidOdo;
+import org.firstinspires.ftc.teamcode.drive.OdometryMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -47,7 +48,7 @@ public class AutoStMidOdo extends LinearOpMode
 
 	public AprilTagDetection tagOfInterest = null;
 
-	public SampleMecanumDrive mecanumDrive;
+	public OdometryMecanumDrive mecanumDrive;
 	int detected = 3;
 	boolean tagFound = false;
 	@Override
@@ -107,7 +108,7 @@ public class AutoStMidOdo extends LinearOpMode
 
 	private void initialize()
 	{
-		mecanumDrive = new SampleMecanumDrive(hardwareMap);
+		mecanumDrive = new OdometryMecanumDrive(hardwareMap);
 		mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
 		mecanumDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		mecanumDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
