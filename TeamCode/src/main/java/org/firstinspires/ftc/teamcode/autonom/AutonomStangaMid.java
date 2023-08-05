@@ -5,9 +5,6 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Servo;
-
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.autonom.OpenCV.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.autonom.Traiectorii.TraiectoriiStangaMid;
@@ -16,56 +13,81 @@ import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-
 import java.util.ArrayList;
+
 
 @Config
 @Autonomous(group = "autonom")
-public class AutonomStangaMid extends LinearOpMode
+public final class AutonomStangaMid extends LinearOpMode
 {
+	public SampleMecanumDrive mecanumDrive;
+
 	OpenCvCamera camera;
 	AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
-	static final double FEET_PER_METER = 3.28084;
-	int cameraMonitorViewId = 0;
-	// Lens intrinsics
-	// UNITS ARE PIXELS
-	// NOTE: this calibration is for the C920 webcam at 800x448.
-	// You will need to do your own calibration for other configurations!
-	double fx = 578.272;
-	double fy = 578.272;
-	double cx = 402.145;
-	double cy = 221.506;
 
-	// UNITS ARE METERS
-	double tagsize = 0.166;
+	int detected = 3; // Default zone is 3
 
-	int Left = 1;
-	int Middle = 2;
-	int Right = 3;
-
-	public AprilTagDetection tagOfInterest = null;
-
-	public SampleMecanumDrive mecanumDrive;
-	public Servo catcher;
-	public DcMotorEx liftMotor1, liftMotor2, wormMotor;
-	int detected = 3;
-	boolean tagFound = false;
 	@Override
 	public void runOpMode() throws InterruptedException
 	{
-		liftMotor1 = hardwareMap.get(DcMotorEx.class, "liftMotor1");
-		liftMotor2 = hardwareMap.get(DcMotorEx.class, "liftMotor2");
-		wormMotor = hardwareMap.get(DcMotorEx.class, "wormMotor");
-		catcher = hardwareMap.get(Servo.class, "catcherServo");
-		liftMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-		liftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-		wormMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+		Init();
 
-		cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+		while (!isStarted() && !isStopRequested())
+			Detectie();
+
+		while (opModeIsActive() && !isStopRequested()) // TODO: testing
+		{
+			new TraiectoriiStangaMid(this).RunAuto(detected);
+			sleep(30000);
+		}
+	}
+
+	private void Detectie()
+	{
+		AprilTagDetection tagOfInterest = ReadPipeline();
+
+		if(tagOfInterest != null)
+			detected = tagOfInterest.id;
+
+		telemetry.addData("obiect", detected);
+		telemetry.update();
+	}
+
+	private AprilTagDetection ReadPipeline()
+	{
+		ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+
+		if(currentDetections.size() != 0)
+		{
+			for (AprilTagDetection tag : currentDetections)
+				if (tag.id == 1 || tag.id == 2 || tag.id == 3)
+					return tag;
+		}
+		return null;
+	}
+
+	private void Init()
+	{
+		// Init MecanumDrive
+		mecanumDrive = new SampleMecanumDrive(hardwareMap);
+		mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
+		mecanumDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+		mecanumDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+		// Init Camera
+		int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName()); // TODO: testing
 		camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-		aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
+		// Init Detection Pipeline
+		double fx = 578.272;
+		double fy = 578.272;
+		double cx = 402.145;
+		double cy = 221.506;
+		double tagSize = 0.166; // meters
+		aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagSize, fx, fy, cx, cy);
+
+		// Enable Camera
 		camera.setPipeline(aprilTagDetectionPipeline);
 		camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
 		{
@@ -73,59 +95,10 @@ public class AutonomStangaMid extends LinearOpMode
 			public void onOpened() { camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT); }
 
 			@Override
-			public void onError(int errorCode) {}
+			public void onError(int errorCode) { telemetry.addData("Cam error", errorCode); }
 		});
 
+
 		telemetry.setMsTransmissionInterval(50);
-
-		initialize();
-		new TraiectoriiStangaMid(this).initializeTrajectories();
-		while (!isStarted() && !isStopRequested() && !tagFound)
-		{
-			detectie();
-			if(tagOfInterest != null)
-				detected = tagOfInterest.id;
-			telemetry.addData("obiect", detected);
-			telemetry.update();
-		}
-		waitForStart();
-		while (opModeIsActive() && !isStopRequested())
-		{
-			new TraiectoriiStangaMid(this).runAuto(detected);
-			sleep(30000);
-		}
-	}
-
-	void detectie()
-	{
-		ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
-
-		if(currentDetections.size() != 0)
-		{
-			for (AprilTagDetection tag : currentDetections)
-			{
-				if (tag.id == Left || tag.id == Middle || tag.id == Right)
-				{
-					tagOfInterest = tag;
-					tagFound = true;
-					break;
-				}
-			}
-		}
-	}
-
-	private void initialize()
-	{
-		liftMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		liftMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-		liftMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		liftMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-		wormMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		wormMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER); /// era fara encoder
-		mecanumDrive = new SampleMecanumDrive(hardwareMap);
-		mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
-		mecanumDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		mecanumDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		AutoUtil.setClaw(catcher,false);
 	}
 }
