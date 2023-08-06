@@ -4,12 +4,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.drive.OdometryMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @TeleOp(group = "Testing")
 public class Test extends LinearOpMode
 {
-	SampleMecanumDrive mecanumDrive;
+	OdometryMecanumDrive mecanumDrive;
 
 	@Override
 	public void runOpMode() throws InterruptedException
@@ -22,7 +23,7 @@ public class Test extends LinearOpMode
 
 	void Init()
 	{
-		mecanumDrive = new SampleMecanumDrive(hardwareMap);
+		mecanumDrive = new OdometryMecanumDrive(hardwareMap);
 		mecanumDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 		telemetry.setMsTransmissionInterval(50);
 	}

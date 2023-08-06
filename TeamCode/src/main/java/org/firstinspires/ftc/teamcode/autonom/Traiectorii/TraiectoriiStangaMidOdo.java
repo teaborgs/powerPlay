@@ -39,59 +39,59 @@ public class TraiectoriiStangaMidOdo
 				//.back(7.5)
 				.build();
 
-		catchCone1 = auto.mecanumDrive.trajectorySequenceBuilder(new Pose2d()).setConstraints(velocityConstraint, accelerationConstraint)
+		catchCone1 = auto.mecanumDrive.trajectorySequenceBuilder(deliverPreload.end()).setConstraints(velocityConstraint, accelerationConstraint)
 				.forward(26.2)
 				.build();
 
-		deliverCone1 = auto.mecanumDrive.trajectorySequenceBuilder(new Pose2d()).setConstraints(velocityConstraint, accelerationConstraint)
+		deliverCone1 = auto.mecanumDrive.trajectorySequenceBuilder(catchCone1.end()).setConstraints(velocityConstraint, accelerationConstraint)
 				.back(25)
 				.build();
 
-		catchCone2 = auto.mecanumDrive.trajectorySequenceBuilder(new Pose2d()).setConstraints(velocityConstraint, accelerationConstraint)
+		catchCone2 = auto.mecanumDrive.trajectorySequenceBuilder(deliverCone1.end()).setConstraints(velocityConstraint, accelerationConstraint)
 				.forward(26)
 				.build();
 
-		deliverCone2 = auto.mecanumDrive.trajectorySequenceBuilder(new Pose2d()).setConstraints(velocityConstraint, accelerationConstraint)
+		deliverCone2 = auto.mecanumDrive.trajectorySequenceBuilder(catchCone2.end()).setConstraints(velocityConstraint, accelerationConstraint)
 				.back(25.5)
 				.build();
 
-		catchCone3 = auto.mecanumDrive.trajectorySequenceBuilder(new Pose2d()).setConstraints(velocityConstraint, accelerationConstraint)
+		catchCone3 = auto.mecanumDrive.trajectorySequenceBuilder(deliverCone2.end()).setConstraints(velocityConstraint, accelerationConstraint)
 				.forward(25.9)
 				.build();
 
-		deliverCone3 = auto.mecanumDrive.trajectorySequenceBuilder(new Pose2d()).setConstraints(velocityConstraint, accelerationConstraint)
+		deliverCone3 = auto.mecanumDrive.trajectorySequenceBuilder(catchCone3.end()).setConstraints(velocityConstraint, accelerationConstraint)
 				.back(25)
 				.build();
 
-		catchCone4 = auto.mecanumDrive.trajectorySequenceBuilder(new Pose2d()).setConstraints(velocityConstraint, accelerationConstraint)
+		catchCone4 = auto.mecanumDrive.trajectorySequenceBuilder(deliverCone3.end()).setConstraints(velocityConstraint, accelerationConstraint)
 				.forward(26.25)
 				.build();
 
-		deliverCone4 = auto.mecanumDrive.trajectorySequenceBuilder(new Pose2d()).setConstraints(velocityConstraint, accelerationConstraint)
+		deliverCone4 = auto.mecanumDrive.trajectorySequenceBuilder(catchCone4.end()).setConstraints(velocityConstraint, accelerationConstraint)
 				.back(25)
 				.build();
 
-		catchCone5 = auto.mecanumDrive.trajectorySequenceBuilder(new Pose2d()).setConstraints(velocityConstraint, accelerationConstraint)
+		catchCone5 = auto.mecanumDrive.trajectorySequenceBuilder(deliverCone4.end()).setConstraints(velocityConstraint, accelerationConstraint)
 				.forward(26)
 				.build();
 
-		deliverCone5 = auto.mecanumDrive.trajectorySequenceBuilder(new Pose2d()).setConstraints(velocityConstraint, accelerationConstraint)
+		deliverCone5 = auto.mecanumDrive.trajectorySequenceBuilder(catchCone5.end()).setConstraints(velocityConstraint, accelerationConstraint)
 				.back(26)
 				.build();
 
 
 
-		park3 = auto.mecanumDrive.trajectorySequenceBuilder(new Pose2d()).setConstraints(velocityConstraint, accelerationConstraint)
+		park3 = auto.mecanumDrive.trajectorySequenceBuilder(deliverCone5.end()).setConstraints(velocityConstraint, accelerationConstraint)
 				.back(13.5)
 				.turn(Math.toRadians(90))
 				.build();
 
-		park2 = auto.mecanumDrive.trajectorySequenceBuilder(new Pose2d()).setConstraints(velocityConstraint, accelerationConstraint)
+		park2 = auto.mecanumDrive.trajectorySequenceBuilder(deliverCone5.end()).setConstraints(velocityConstraint, accelerationConstraint)
 				.forward(11)
 				.turn(Math.toRadians(90))
 				.build();
 
-		park1 = auto.mecanumDrive.trajectorySequenceBuilder(new Pose2d()).setConstraints(velocityConstraint, accelerationConstraint)
+		park1 = auto.mecanumDrive.trajectorySequenceBuilder(deliverCone5.end()).setConstraints(velocityConstraint, accelerationConstraint)
 				.forward(32)
 				.turn(Math.toRadians(90))
 				.build();

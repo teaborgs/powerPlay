@@ -5,6 +5,9 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.autonom.OpenCV.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.autonom.Traiectorii.TraiectoriiStangaMid;
@@ -21,6 +24,8 @@ import java.util.ArrayList;
 public final class AutonomStangaMid extends LinearOpMode
 {
 	public SampleMecanumDrive mecanumDrive;
+	public Servo catcher;
+	public DcMotorEx liftMotor1, liftMotor2, wormMotor;
 
 	OpenCvCamera camera;
 	AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -69,11 +74,28 @@ public final class AutonomStangaMid extends LinearOpMode
 
 	private void Init()
 	{
-		// Init MecanumDrive
+		// Init Hardware
 		mecanumDrive = new SampleMecanumDrive(hardwareMap);
 		mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
 		mecanumDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 		mecanumDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+		liftMotor1 = hardwareMap.get(DcMotorEx.class, "liftMotor1");
+		liftMotor2 = hardwareMap.get(DcMotorEx.class, "liftMotor2");
+		wormMotor = hardwareMap.get(DcMotorEx.class, "wormMotor");
+		catcher = hardwareMap.get(Servo.class, "catcherServo");
+		liftMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+		liftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+		wormMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+		liftMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		liftMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+		liftMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		liftMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+		wormMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		wormMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+		AutoUtil.setClaw(catcher, false);
 
 		// Init Camera
 		int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName()); // TODO: testing

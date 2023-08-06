@@ -31,8 +31,10 @@ public class TraiectoriiStangaMid
 		TrajectoryAccelerationConstraint accelConstraint = SampleMecanumDrive.getAccelerationConstraint(MAX_ACCEL_AUTO);
 
 		deliverPreload = auto.mecanumDrive.trajectorySequenceBuilder(new Pose2d()).setConstraints(velConstraint, accelConstraint)
-				.strafeRight(55.4)
-				.back(7.5)
+				.strafeRight(45)
+				.splineToConstantHeading(new Vector2d(-8.5, -55), Math.toRadians(0))
+//				.strafeRight(55.4)
+//				.back(8)
 				.addTemporalMarker(0, () -> AutoUtil.liftPosition(auto.liftMotor1, auto.liftMotor2, AutoPosition.MID))
 				.addTemporalMarker(0.5, () -> AutoUtil.platePosition(auto.wormMotor,-2020))
 				.build();
@@ -107,7 +109,7 @@ public class TraiectoriiStangaMid
 				.build();
 
 		park2 = auto.mecanumDrive.trajectorySequenceBuilder(new Pose2d()).setConstraints(velConstraint, accelConstraint)
-				.forward(11)
+				.forward(9)
 				.turn(Math.toRadians(90))
 				.addTemporalMarker(.1, () -> AutoUtil.platePosition(auto.wormMotor,-1045))
 				.addTemporalMarker(1.7, () -> AutoUtil.liftPosition(auto.liftMotor1, auto.liftMotor2, AutoPosition.ZERO))
