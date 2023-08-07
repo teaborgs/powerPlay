@@ -36,7 +36,7 @@ public class Test extends LinearOpMode
 
 	void Telemetry()
 	{
-		telemetry.addData("Heading", mecanumDrive.getExternalHeadingVelocity());
+		telemetry.addData("Heading", Math.toDegrees(mecanumDrive.getRawExternalHeading()));
 		telemetry.update();
 	}
 }

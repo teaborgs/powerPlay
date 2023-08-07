@@ -32,7 +32,7 @@ public class TraiectoriiStangaMid
 
 		deliverPreload = auto.mecanumDrive.trajectorySequenceBuilder(new Pose2d()).setConstraints(velConstraint, accelConstraint)
 				.strafeRight(45)
-				.splineToConstantHeading(new Vector2d(-8.5, -55), Math.toRadians(0))
+				.splineToConstantHeading(new Vector2d(-9, -55), Math.toRadians(0))
 //				.strafeRight(55.4)
 //				.back(8)
 				.addTemporalMarker(0, () -> AutoUtil.liftPosition(auto.liftMotor1, auto.liftMotor2, AutoPosition.MID))

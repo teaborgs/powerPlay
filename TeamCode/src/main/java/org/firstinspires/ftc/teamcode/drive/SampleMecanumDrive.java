@@ -95,7 +95,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 		BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 		parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
 		imu.initialize(parameters);
-		BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_X); // logo REV vertical, citit normal
+	//	BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_X); // logo REV vertical, citit normal
 
 		// TODO: If the hub containing the IMU you are using is mounted so that the "REV" logo does
 		// not face up, remap the IMU axes so that the z-axis points upward (normal to the floor.)
@@ -304,7 +304,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
 	@Override
 	public Double getExternalHeadingVelocity() {
-		return (double) imu.getAngularVelocity().zRotationRate; // remap imu axis, not this axis
+		return (double) imu.getAngularVelocity().xRotationRate; // remap imu axis, not this axis
 	}
 
 	public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {

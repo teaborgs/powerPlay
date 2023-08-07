@@ -77,7 +77,7 @@ public final class AutonomStangaMid extends LinearOpMode
 		// Init Hardware
 		mecanumDrive = new SampleMecanumDrive(hardwareMap);
 		mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
-		mecanumDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+		mecanumDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		mecanumDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 		liftMotor1 = hardwareMap.get(DcMotorEx.class, "liftMotor1");
@@ -94,8 +94,6 @@ public final class AutonomStangaMid extends LinearOpMode
 		liftMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 		wormMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		wormMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-		AutoUtil.setClaw(catcher, false);
 
 		// Init Camera
 		int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName()); // TODO: testing
@@ -120,6 +118,7 @@ public final class AutonomStangaMid extends LinearOpMode
 			public void onError(int errorCode) { telemetry.addData("Cam error", errorCode); }
 		});
 
+		AutoUtil.setClaw(catcher, false);
 
 		telemetry.setMsTransmissionInterval(50);
 	}
