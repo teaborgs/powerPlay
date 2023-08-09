@@ -35,7 +35,7 @@ public class TraiectoriiStangaMid
 				.splineToConstantHeading(new Vector2d(-9, -55), Math.toRadians(0))
 //				.strafeRight(55.4)
 //				.back(8)
-				.addTemporalMarker(0, () -> AutoUtil.liftPosition(auto.liftMotor1, auto.liftMotor2, AutoPosition.MID))
+				.addTemporalMarker(0, () -> AutoUtil.liftPosition(auto.liftMotor1, auto.liftMotor2, AutoPosition.MIDother))
 				.addTemporalMarker(0.5, () -> AutoUtil.platePosition(auto.wormMotor,-2020))
 				.build();
 
@@ -129,10 +129,10 @@ public class TraiectoriiStangaMid
 		AutoUtil.setClaw(auto.catcher,false);
 
 		auto.mecanumDrive.followTrajectorySequence(deliverPreload);
-		auto.mecanumDrive.setPoseEstimate(new Pose2d(0, 0)); // TODO: redundant?
+		auto.mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
 		auto.sleep(300);
 		AutoUtil.setClaw(auto.catcher,true);
-		auto.sleep(100);
+		auto.sleep(200);
 
 		auto.mecanumDrive.followTrajectorySequence(catchCone1);
 		auto.mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
@@ -144,7 +144,7 @@ public class TraiectoriiStangaMid
 		auto.mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
 		auto.sleep(250);
 		AutoUtil.setClaw(auto.catcher,true);
-		auto.sleep(100);
+		auto.sleep(150);
 
 		auto.mecanumDrive.followTrajectorySequence(catchCone2);
 		auto.mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
@@ -156,7 +156,7 @@ public class TraiectoriiStangaMid
 		auto.mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
 		auto.sleep(250);
 		AutoUtil.setClaw(auto.catcher,true);
-		auto.sleep(100);
+		auto.sleep(150);
 
 		auto.mecanumDrive.followTrajectorySequence(catchCone3);
 		auto.mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
@@ -168,7 +168,7 @@ public class TraiectoriiStangaMid
 		auto.mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
 		auto.sleep(250);
 		AutoUtil.setClaw(auto.catcher,true);
-		auto.sleep(100);
+		auto.sleep(150);
 
 		auto.mecanumDrive.followTrajectorySequence(catchCone4);
 		auto.mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
@@ -180,7 +180,7 @@ public class TraiectoriiStangaMid
 		auto.mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
 		auto.sleep(250);
 		AutoUtil.setClaw(auto.catcher,true);
-		auto.sleep(100);
+		auto.sleep(150);
 
 		auto.mecanumDrive.followTrajectorySequence(catchCone5);
 		auto.mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
@@ -192,7 +192,7 @@ public class TraiectoriiStangaMid
 		auto.mecanumDrive.setPoseEstimate(new Pose2d(0, 0));
 		auto.sleep(250);
 		AutoUtil.setClaw(auto.catcher,true);
-		auto.sleep(100);
+		auto.sleep(150);
 
 		// Park
 		switch (detection)
