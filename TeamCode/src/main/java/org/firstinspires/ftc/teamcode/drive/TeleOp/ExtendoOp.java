@@ -21,11 +21,18 @@ public final class ExtendoOp extends LinearOpMode
 
 	Servo claw, loader, scorer;
 
-	float nextClawPos = 0.6f;
 
 	private static final int LiftUp = 1130;
 	private static final int LiftDown = 80;
 	private static final float LiftPower = 0.66f;
+
+	private static final float ClawOpen = 1.0f;
+	private static final float ClawClosed = 0.0f;
+
+	private static final float LoaderUp = 1.0f;
+	private static final float LoaderDown = 0.0f;
+
+
 
 	@Override
 	public void runOpMode() throws InterruptedException
@@ -67,6 +74,7 @@ public final class ExtendoOp extends LinearOpMode
 		Worm();
 		Lift();
 		Claw();
+		Loader();
 	}
 
 	private void Worm()
@@ -103,17 +111,40 @@ public final class ExtendoOp extends LinearOpMode
 	}
 
 
+	private boolean clawOpen = true;
 	private boolean safe = false;
 	private void Claw()
 	{
+		// Input
 		if (gamepad1.right_bumper && !safe)
 		{
-			claw.setPosition(nextClawPos);
+			clawOpen = !clawOpen;
 
 			safe = true;
 		}
 		else if (!gamepad1.right_bumper)
 			safe = false;
+
+		// Move
+		claw.setPosition(clawOpen ? ClawOpen : ClawClosed);
+	}
+
+	private boolean loaderUp = false;
+	private boolean safe3 = false;
+	private void Loader()
+	{
+		// Input
+		if (gamepad2.x && !safe3)
+		{
+			loaderUp = !loaderUp;
+
+			safe3 = true;
+		}
+		else if (!gamepad1.right_bumper)
+			safe3 = false;
+
+		// Move
+		loader.setPosition(loaderUp ? LoaderUp : LoaderDown);
 	}
 
 	private void Telemetry()
