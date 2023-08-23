@@ -15,13 +15,12 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 @TeleOp(group = "Driving")
-public class teleop2 extends LinearOpMode {
-
+public class teleop2 extends LinearOpMode
+{
 	SampleMecanumDrive mecanumDrive;
 	DcMotorEx liftMotor1, liftMotor2, wormMotor;
 	Servo catcher;
 	double suppress1;
-	int pp = 0, cp1 = 0, cp2 = 0;
 	double suppressRotate;
 
 	ElapsedTime runtime = new ElapsedTime();
@@ -73,8 +72,6 @@ public class teleop2 extends LinearOpMode {
 		);
 	}
 
-	boolean standing = true;
-
 	private void resetArmLocalization() {
 		if (gamepad2.right_stick_button) {
 			liftMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -83,8 +80,6 @@ public class teleop2 extends LinearOpMode {
 	}
 
 	boolean lastPressedCatch = false;
-	boolean conuri = false;
-	boolean sus = false;
 	ElapsedTime timpCon = new ElapsedTime();
 	private void controlCatcher() {
 		executeCurrentMoveTarget();
