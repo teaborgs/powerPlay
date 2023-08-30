@@ -23,7 +23,7 @@ public final class ExtendoOp extends LinearOpMode
 
 
 	private static final int LiftUp = 1130;
-	private static final int LiftDown = 80;
+	private static final int LiftDown = 0;
 	private static final float LiftPower = 0.66f;
 
 	private static final float ClawOpen = 1.0f;
@@ -88,13 +88,13 @@ public final class ExtendoOp extends LinearOpMode
 	private void Lift()
 	{
 		// Input
-		if (gamepad1.right_bumper && !safe2)
+		if (gamepad2.right_bumper && !safe2)
 		{
 			extendedLift = !extendedLift;
 
 			safe2 = true;
 		}
-		else if (!gamepad1.right_bumper)
+		else if (!gamepad2.right_bumper)
 			safe2 = false;
 
 
@@ -102,6 +102,11 @@ public final class ExtendoOp extends LinearOpMode
 		lift.setTargetPosition(extendedLift ? LiftUp : LiftDown);
 		lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 		lift.setPower(LiftPower);
+
+		if (lift.getCurrentPosition() < 100)
+			scorer.setPosition(0.0);
+		else if (lift.getCurrentPosition() < 900)
+			scorer.setPosition(0.25);
 	}
 
 	private void Extendo()
@@ -109,6 +114,7 @@ public final class ExtendoOp extends LinearOpMode
 		extendo1.setPower(gamepad2.right_stick_y);
 		extendo2.setPower(gamepad2.right_stick_y);
 	}
+
 
 
 	private boolean clawOpen = true;
@@ -140,12 +146,13 @@ public final class ExtendoOp extends LinearOpMode
 
 			safe3 = true;
 		}
-		else if (!gamepad1.right_bumper)
+		else if (!gamepad2.x)
 			safe3 = false;
 
 		// Move
 		loader.setPosition(loaderUp ? LoaderUp : LoaderDown);
 	}
+
 
 	private void Telemetry()
 	{
