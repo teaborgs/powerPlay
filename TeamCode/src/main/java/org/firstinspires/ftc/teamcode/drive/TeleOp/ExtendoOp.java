@@ -22,15 +22,21 @@ public final class ExtendoOp extends LinearOpMode
 	Servo claw, loader, scorer;
 
 
-	private static final int LiftUp = 1130;
+	private static final int LiftUp = 1250;//1130
 	private static final int LiftDown = 0;
 	private static final float LiftPower = 0.66f;
+
+	private static final int ExtendoUp = 380;
+	private static final int ExtendoDown = -150;
+	private static final float ExtendoPower = 1.0f;
 
 	private static final float ClawOpen = 1.0f;
 	private static final float ClawClosed = 0.0f;
 
 	private static final float LoaderUp = 1.0f;
 	private static final float LoaderDown = 0.0f;
+
+
 
 
 
@@ -44,7 +50,7 @@ public final class ExtendoOp extends LinearOpMode
 		while (opModeIsActive() && !isStopRequested())
 			Run();
 	}
-
+ 
 
 	private void Run()
 	{
@@ -62,7 +68,7 @@ public final class ExtendoOp extends LinearOpMode
 			suppress = 0.5f;
 
 		// Control
-		Vector2d in = new Vector2d(gamepad1.right_stick_x * suppress, gamepad1.right_stick_y * suppress)
+		Vector2d in = new Vector2d(-gamepad1.right_stick_x * suppress, -gamepad1.right_stick_y * suppress)
 					   .rotated(-mecanumDrive.getPoseEstimate().getHeading());
 		mecanumDrive.setWeightedDrivePower(new Pose2d(in.getX(), in.getY(), gamepad1.left_trigger - gamepad1.right_trigger));
 	}
@@ -75,16 +81,26 @@ public final class ExtendoOp extends LinearOpMode
 		Lift();
 		Claw();
 		Loader();
+		Scorer();
 	}
-
-	private void Worm()
-	{
-		worm.setPower(gamepad2.left_trigger - gamepad2.right_trigger);
-	}
-
 
 	boolean extendedLift = false;
 	boolean safe2 = false;
+	float ScorerUp = 0.5f;
+	int wormPos;
+	private void Worm()
+	{
+		//worm.setPower(gamepad2.left_trigger- gamepad2.right_trigger);
+		if(gamepad2.dpad_right)
+			wormPos = -160;
+		else if(gamepad2.dpad_left)
+			wormPos = 160;
+
+
+	}
+
+
+
 	private void Lift()
 	{
 		// Input
@@ -93,6 +109,8 @@ public final class ExtendoOp extends LinearOpMode
 			extendedLift = !extendedLift;
 
 			safe2 = true;
+
+			ScorerUp = 0.5f;
 		}
 		else if (!gamepad2.right_bumper)
 			safe2 = false;
@@ -103,16 +121,57 @@ public final class ExtendoOp extends LinearOpMode
 		lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 		lift.setPower(LiftPower);
 
-		if (lift.getCurrentPosition() < 100)
-			scorer.setPosition(0.0);
-		else if (lift.getCurrentPosition() < 900)
-			scorer.setPosition(0.25);
+		if (extendedLift)
+		{
+			scorer.setPosition(ScorerUp);
+			worm.setTargetPosition(wormPos);
+			worm.setPower(1f);
+			worm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+		}
+		else
+		{
+			scorer.setPosition(0);
+			worm.setTargetPosition(0);
+			worm.setPower(1f);
+			worm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+		}
 	}
 
+	boolean extendedExtendo = false;
+	boolean safe3 = false;
 	private void Extendo()
 	{
-		extendo1.setPower(gamepad2.right_stick_y);
-		extendo2.setPower(gamepad2.right_stick_y);
+		// Input
+		if (gamepad2.y && !safe3)
+		{
+			extendedExtendo = !extendedExtendo;
+
+			safe3 = true;
+		}
+		else if (!gamepad2.y)
+			safe3 = false;
+
+
+		// Move
+		extendo1.setTargetPosition(extendedExtendo ? ExtendoUp : ExtendoDown);
+		extendo1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+		extendo1.setPower(ExtendoPower);
+
+		extendo2.setTargetPosition(extendedExtendo ? ExtendoUp : ExtendoDown);
+		extendo2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+		extendo2.setPower(ExtendoPower);
+
+		/*if(extendedExtendo)
+		{
+			claw.setPosition(ClawOpen);
+			loader.setPosition(LoaderDown);
+		}
+		else
+		{
+			claw.setPosition(ClawClosed);
+			loader.setPosition(LoaderUp);
+		}*/
+
 	}
 
 
@@ -122,13 +181,13 @@ public final class ExtendoOp extends LinearOpMode
 	private void Claw()
 	{
 		// Input
-		if (gamepad1.right_bumper && !safe)
+		if (gamepad2.b && !safe)
 		{
 			clawOpen = !clawOpen;
 
 			safe = true;
 		}
-		else if (!gamepad1.right_bumper)
+		else if (!gamepad2.b)
 			safe = false;
 
 		// Move
@@ -136,21 +195,28 @@ public final class ExtendoOp extends LinearOpMode
 	}
 
 	private boolean loaderUp = false;
-	private boolean safe3 = false;
+	private boolean safe4 = false;
 	private void Loader()
 	{
 		// Input
-		if (gamepad2.x && !safe3)
+		if (gamepad2.x && !safe4)
 		{
 			loaderUp = !loaderUp;
 
-			safe3 = true;
+			safe4 = true;
 		}
 		else if (!gamepad2.x)
-			safe3 = false;
+			safe4 = false;
 
 		// Move
 		loader.setPosition(loaderUp ? LoaderUp : LoaderDown);
+	}
+
+
+	private void Scorer()
+	{
+		if (gamepad2.left_bumper)
+			ScorerUp = 1f;
 	}
 
 
@@ -198,12 +264,13 @@ public final class ExtendoOp extends LinearOpMode
 		extendo1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		extendo1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		extendo1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+		extendo1.setDirection(DcMotorSimple.Direction.REVERSE);
 
 		extendo2 = hardwareMap.get(DcMotorEx.class, "slot7");
 		extendo2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		extendo2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		extendo2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-		extendo2.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
 		// Servos
 		claw = hardwareMap.get(Servo.class, "claw");
