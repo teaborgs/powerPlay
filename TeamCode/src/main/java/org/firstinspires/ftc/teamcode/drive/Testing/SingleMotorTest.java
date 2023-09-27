@@ -9,26 +9,26 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 @TeleOp(group = "Testing")
 public class SingleMotorTest extends LinearOpMode
 {
-    DcMotorEx motor;
+	DcMotorEx motor;
 
-    @Override
-    public void runOpMode() throws InterruptedException
-    {
-        Init();
-        waitForStart();
+	@Override
+	public void runOpMode() throws InterruptedException
+	{
+		Init();
+		waitForStart();
 
-        while (opModeIsActive() && !isStopRequested())
-            RunLoop();
-    }
+		while (opModeIsActive() && !isStopRequested())
+			RunLoop();
+	}
 
-    private void Init()
-    {
-        motor = hardwareMap.get(DcMotorEx.class, "slot0");
-        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-    }
+	private void Init()
+	{
+		motor = hardwareMap.get(DcMotorEx.class, "slot0");
+		motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+	}
 
-    private void RunLoop()
-    {
-        motor.setPower(gamepad1.right_stick_y);
-    }
+	private void RunLoop()
+	{
+		motor.setPower(gamepad1.right_stick_y);
+	}
 }
