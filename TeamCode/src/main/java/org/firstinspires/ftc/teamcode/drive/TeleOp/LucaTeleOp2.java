@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -43,14 +44,18 @@ public class LucaTeleOp2 extends LinearOpMode
 	private void Init()
 	{
 		mecanumDrive = new SampleMecanumDrive(hardwareMap);
+		mecanumDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 		intakeMotor = hardwareMap.get(DcMotorEx.class, "slot2");
+		intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 		liftMotor1 = hardwareMap.get(DcMotorEx.class, "slot3");
 		liftMotor2 = hardwareMap.get(DcMotorEx.class, "slot7");
+		liftMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+		liftMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
-		clawServo = hardwareMap.get(clawServo.getClass(), "servo0");
+		clawServo = hardwareMap.get(Servo.class, "servo0");
 
 		wheelGamepad = gamepad1;
 		armGamepad = gamepad2;
@@ -118,14 +123,14 @@ public class LucaTeleOp2 extends LinearOpMode
 
 		// Control
 		Vector2d input = new Vector2d(
-				gamepad1.left_stick_y * suppressVal,
-				gamepad1.left_stick_x * suppressVal
+				wheelGamepad.left_stick_y * suppressVal,
+				wheelGamepad.left_stick_x * suppressVal
 		).rotated(-mecanumDrive.getPoseEstimate().getHeading());
 		mecanumDrive.setDrivePower(
 				new Pose2d(
 						input.getX(),
 						input.getY(),
-						-(gamepad1.right_trigger - gamepad1.left_trigger) * suppressVal
+						-(wheelGamepad.right_trigger - wheelGamepad.left_trigger) * suppressVal
 				)
 		);
 	}
